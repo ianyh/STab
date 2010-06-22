@@ -1,0 +1,5 @@
+*.xcodeproj
+bin/*
+build/*
+local.properties
+*~
