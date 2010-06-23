@@ -1,14 +1,16 @@
 package com.scarredions.stab;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Gallery;
+import android.widget.ListView;
 
-public class STab extends ListActivity
+import com.scarredions.stab.STPersonListAdapter;
+
+public class STab extends Activity
 {
-	private String[] items = {"1", "2", "3"};
+	static final String[] items = {"1", "2", "3"};
 	
     /** Called when the activity is first created. */
     @Override
@@ -16,10 +18,12 @@ public class STab extends ListActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        ListView lv = (ListView) findViewById(R.id.list);
 		
-		setListAdapter(new ArrayAdapter(this, R.layout.list_item, items));
+		lv.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items));
 		
-//		Gallery g = (Gallery) findViewById(R.id.gallery);
-//		g.setAdapter(new STPersonAdapter(this));
+		Gallery g = (Gallery) findViewById(R.id.gallery);
+		g.setAdapter(new STPersonListAdapter(this));
     }
 }
