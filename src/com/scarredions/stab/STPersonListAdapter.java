@@ -30,6 +30,9 @@ public class STPersonListAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		TextView tv = new TextView(mContext);
 		tv.setText(items[position]);
+		tv.setHeight(100);
+		tv.setWidth(100);
+		tv.setGravity(android.view.Gravity.CENTER);
 		return tv;
 	}
 
