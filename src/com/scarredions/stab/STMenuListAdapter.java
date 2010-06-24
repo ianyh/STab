@@ -27,5 +27,5 @@ public class STMenuListAdapter extends ArrayAdapter<String> {
         ctv.setChecked(pla.currentPersonHasSelected(position));
         return ctv;
     }
-    
+
 }

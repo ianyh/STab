@@ -13,6 +13,9 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class STPersonListAdapter extends BaseAdapter implements DialogInterface.OnClickListener {
@@ -43,7 +46,9 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
-	    if (convertView == null) {
+	    if (position == people.size()) {
+	        return addButton;
+	    } else if (convertView == null) {
 	        TextView tv = new TextView(mContext);
 	        tv.setText(people.get(position));
 	        tv.setHeight(100);    
