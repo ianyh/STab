@@ -28,12 +28,16 @@ public class STPersonListAdapter extends BaseAdapter {
 	}
 
 	public View getView(int position, View convertView, ViewGroup parent) {
-		TextView tv = new TextView(mContext);
-		tv.setText(items[position]);
-		tv.setHeight(100);
-		tv.setWidth(100);
-		tv.setGravity(android.view.Gravity.CENTER);
-		return tv;
+	    if (convertView == null) {
+	        TextView tv = new TextView(mContext);
+	        tv.setText(items[position]);  
+	        tv.setHeight(100);    
+	        tv.setWidth(100);
+	        tv.setGravity(android.view.Gravity.CENTER);
+	        return tv;
+	    } else {
+	        return (TextView) convertView;
+	    }
 	}
 
 }
