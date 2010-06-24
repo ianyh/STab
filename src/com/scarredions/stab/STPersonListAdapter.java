@@ -45,11 +45,11 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
 	public View getView(int position, View convertView, ViewGroup parent) {
 	    if (convertView == null) {
 	        TextView tv = new TextView(mContext);
-            tv.setText(people.get(position));
-            tv.setHeight(100);    
-            tv.setWidth(100);
-            tv.setGravity(android.view.Gravity.CENTER);
-            return tv;
+	        tv.setText(people.get(position));
+	        tv.setHeight(100);    
+	        tv.setWidth(100);
+	        tv.setGravity(android.view.Gravity.CENTER);
+	        return tv;
 	    } else {
 	        return (TextView) convertView;
 	    }
