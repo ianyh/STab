@@ -12,30 +12,30 @@ import android.widget.EditText;
 
 public class STMenuListAdapter extends ArrayAdapter<String> implements DialogInterface.OnClickListener {
     
-    private STPersonListAdapter pla;
+    private STPersonListAdapter personListAdapter;
     
     public STMenuListAdapter(Context mContext, int textViewResourceId) {
         super(mContext, textViewResourceId);
     }
     
     public void setPersonListAdapter(STPersonListAdapter pla) {
-        this.pla = pla;
+        this.personListAdapter = pla;
     }
     
     public STPersonListAdapter getPersonListAdapter() {
-        return pla;
+        return personListAdapter;
     }
     
     public View getView(int position, View convertView, ViewGroup parent) {
         CheckedTextView ctv = (CheckedTextView) super.getView(position, convertView, parent);
-        ctv.setChecked(pla.currentPersonHasSelected(position));
+        ctv.setChecked(personListAdapter.currentPersonHasSelected(position));
         return ctv;
     }
     
     public void onClick(DialogInterface dialog, int whichButton) {
         if (whichButton == DialogInterface.BUTTON_POSITIVE) {
             AlertDialog d = (AlertDialog) dialog;
-            add(((EditText) d.findViewById(R.id.item_id_edit)).getText().toString());
+            add(((EditText) d.findViewById(R.id.item_name_edit)).getText().toString());
             this.notifyDataSetChanged();
         }
     }
