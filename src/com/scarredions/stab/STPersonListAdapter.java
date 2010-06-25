@@ -8,25 +8,15 @@ import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Gallery;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Gallery;
 import android.widget.TextView;
 
 public class STPersonListAdapter extends BaseAdapter implements DialogInterface.OnClickListener {
 
-	//private final String[] items = {"1", "2", "3"};
     private ArrayList<String> people;
 	private Context mContext;
 	private STMenuListAdapter mla;
-	private Button addButton;
 	
 	public STPersonListAdapter(Context c) {
 		mContext = c;

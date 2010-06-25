@@ -81,7 +81,8 @@ public class STab extends Activity
     	Button b = (Button) v;
     	if (b == addPerson)
     		personList.addPersonByDialog();
-    	
+    	else if (b == addMenuItem)
+    		menuList.addMenuItemByDialog();
     }
     
 }
