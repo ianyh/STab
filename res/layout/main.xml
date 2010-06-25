@@ -1,15 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">	
-	<Gallery
-		android:id="@+id/gallery"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content" />
-	<ListView
-		android:id="@+id/list"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent" />
-</LinearLayout>
+    android:layout_height="fill_parent">
+		<Button
+			android:id="@+id/add_person"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentRight="true"
+			android:gravity="center"
+			android:text="+" />
+		<Gallery
+			android:id="@+id/gallery"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentTop="true"
+			android:layout_toLeftOf="@id/add_person"
+			android:gravity="center" />
+		<View
+			android:id="@+id/divider"
+			android:background="@drawable/gradient"
+			android:layout_width="fill_parent"
+			android:layout_height="1dp"
+			android:layout_below="@id/gallery" />			
+		<Button
+			android:id="@+id/add_item"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			android:clickable="true"
+			android:focusable="false"
+			android:text="+"
+			android:gravity="center" />
+		<ListView
+			android:id="@+id/list"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/divider"
+			android:layout_above="@id/add_item"
+			android:layout_gravity="fill_vertical" />
+</RelativeLayout>
 
