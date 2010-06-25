@@ -33,22 +33,22 @@ public class STMenuListAdapter extends ArrayAdapter<String> implements DialogInt
     }
     
     public void onClick(DialogInterface dialog, int whichButton) {
-    	if (whichButton == DialogInterface.BUTTON_POSITIVE) {
-	        AlertDialog d = (AlertDialog) dialog;
-	        add(((EditText) d.findViewById(R.id.item_id_edit)).getText().toString());
-	        this.notifyDataSetChanged();
-    	}
+        if (whichButton == DialogInterface.BUTTON_POSITIVE) {
+            AlertDialog d = (AlertDialog) dialog;
+            add(((EditText) d.findViewById(R.id.item_id_edit)).getText().toString());
+            this.notifyDataSetChanged();
+        }
     }
     
     public void addMenuItemByDialog() {
-	    LayoutInflater factory = LayoutInflater.from(this.getContext());
-	    final View textEntryView = factory.inflate(R.layout.dialog_menu_item_entry, null);
-	    
-	    new AlertDialog.Builder(this.getContext())
-	        .setView(textEntryView)
-	        .setPositiveButton("OK", this)
-	        .setNegativeButton("Cancel", this)
-	        .create().show();    	
+        LayoutInflater factory = LayoutInflater.from(this.getContext());
+        final View textEntryView = factory.inflate(R.layout.dialog_menu_item_entry, null);
+        
+        new AlertDialog.Builder(this.getContext())
+            .setView(textEntryView)
+            .setPositiveButton("OK", this)
+            .setNegativeButton("Cancel", this)
+            .create().show();        
     }
 
 }

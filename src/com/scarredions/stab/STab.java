@@ -18,14 +18,14 @@ import com.scarredions.stab.STPersonListAdapter;
 // TODO: bind to contacts for autocomplete
 
 public class STab extends Activity
-	implements OnClickListener
-{	
-	
-	private STMenuListAdapter menuList;
-	private STPersonListAdapter personList;
-	private Button addPerson;
-	private Button addMenuItem;
-	
+    implements OnClickListener
+{    
+    
+    private STMenuListAdapter menuList;
+    private STPersonListAdapter personList;
+    private Button addPerson;
+    private Button addMenuItem;
+    
     /** Called when the activity is first created. */
     @Override 
     public void onCreate(Bundle savedInstanceState)
@@ -47,24 +47,24 @@ public class STab extends Activity
 
         // set up the menu list view
         ListView lv = (ListView) findViewById(R.id.list);
-		lv.setAdapter(menuList);
-		lv.setClickable(true);
-		lv.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-				((CheckedTextView) v).toggle();
-			}
-		});
-		menuList.add("test");
-		
-		// set up the person gallery
-		Gallery g = (Gallery) findViewById(R.id.gallery);
-		g.setAdapter(menuList.getPersonListAdapter());
-		g.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-			    STPersonListAdapter adapter = (STPersonListAdapter) parent.getAdapter();
-			    adapter.getMenuListAdapter().notifyDataSetChanged();
-			}
-		});
+        lv.setAdapter(menuList);
+        lv.setClickable(true);
+        lv.setOnItemClickListener(new OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                ((CheckedTextView) v).toggle();
+            }
+        });
+        menuList.add("test");
+        
+        // set up the person gallery
+        Gallery g = (Gallery) findViewById(R.id.gallery);
+        g.setAdapter(menuList.getPersonListAdapter());
+        g.setOnItemClickListener(new OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                STPersonListAdapter adapter = (STPersonListAdapter) parent.getAdapter();
+                adapter.getMenuListAdapter().notifyDataSetChanged();
+            }
+        });
     }
     
     public Button fixAndGetAddPersonButton()
@@ -78,11 +78,11 @@ public class STab extends Activity
     
     public void onClick(View v)
     {
-    	Button b = (Button) v;
-    	if (b == addPerson)
-    		personList.addPersonByDialog();
-    	else if (b == addMenuItem)
-    		menuList.addMenuItemByDialog();
+        Button b = (Button) v;
+        if (b == addPerson)
+            personList.addPersonByDialog();
+        else if (b == addMenuItem)
+            menuList.addMenuItemByDialog();
     }
     
 }
