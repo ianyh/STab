@@ -20,7 +20,6 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
 
     private Context mContext;
     private STDataController dataController;
-        
     public STMenuListAdapter(Context mContext, STDataController dataController) {
         this.mContext = mContext;
         this.dataController = dataController;
@@ -61,7 +60,7 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
         menuItemPrice.setText(getFormattedPrice(dataController.getMenuItemPrice(position)));
         menuItemPrice.setChecked(dataController.currentPersonHasSelected(position));
         
-        return menuItemView;        
+        return menuItemView;
     }
 
     public Object getItem(int position) {
@@ -71,7 +70,7 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
     public void add(String itemName, Double itemPrice) {
         dataController.addMenuItem(itemName, itemPrice);
     }
-    
+        
     public void onClick(DialogInterface dialog, int whichButton) {
         if (whichButton == DialogInterface.BUTTON_POSITIVE) {
             AlertDialog d = (AlertDialog) dialog;

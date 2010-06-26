@@ -1,7 +1,11 @@
 package com.scarredions.stab;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,11 +22,8 @@ import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.scarredions.stab.STPersonListAdapter;
 
-// TODO: bind to contacts for people/images
-
 public class STab extends Activity implements OnClickListener
-{    
-    
+{
     private STMenuListAdapter menuListAdapter;
     private STPersonListAdapter personListAdapter;
     private Button addPersonButton;
@@ -50,7 +51,7 @@ public class STab extends Activity implements OnClickListener
 
         // set up the menu list view
         ListView menuListView = (ListView) findViewById(R.id.menu_list_view);
-        View menuListTotal = getMenuListTotalView();
+        View menuListTotal = inflateMenuListTotalView();
         menuListView.addFooterView(menuListTotal);
         menuListView.setAdapter(menuListAdapter);
         menuListView.setClickable(true);
@@ -90,6 +91,12 @@ public class STab extends Activity implements OnClickListener
         });
         personListAdapter.add("you");
         personListAdapter.setPersonListView(personListView);
+        
+        Cursor cursor = getContacts();
+        STContactListAdapter contactsAdapter = new STContactListAdapter(this, 
+                android.R.layout.simple_dropdown_item_1line, cursor,
+                new String[] { ContactsContract.Data.DISPLAY_NAME }, new int[] { android.R.id.text1 });
+        personListAdapter.setContactsAutocompleteAdapter(contactsAdapter);
     }
     
     public Button fixAndGetAddPersonButton()
@@ -101,10 +108,21 @@ public class STab extends Activity implements OnClickListener
         return b;
     }
     
-    public View getMenuListTotalView()
+    public View inflateMenuListTotalView()
     {
         LayoutInflater factory = LayoutInflater.from(this);
         return factory.inflate(R.layout.list_total, null);
+    }
+    
+    public Cursor getContacts() {
+        Uri uri = ContactsContract.Contacts.CONTENT_URI;
+        String[] projection = new String[] {
+                ContactsContract.Contacts._ID,
+                ContactsContract.Contacts.DISPLAY_NAME
+        };
+
+        ContentResolver content = getContentResolver();
+        return content.query(uri, projection, null, null, ContactsContract.Contacts.DISPLAY_NAME);
     }
     
     public void onClick(View v)

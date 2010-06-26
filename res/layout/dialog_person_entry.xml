@@ -14,7 +14,7 @@
         android:gravity="left"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <EditText
+    <AutoCompleteTextView
 	android:id="@+id/name_edit"
 	android:layout_height="wrap_content"
 	android:layout_width="match_parent"
