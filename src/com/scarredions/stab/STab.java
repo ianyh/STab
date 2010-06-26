@@ -41,10 +41,11 @@ public class STab extends Activity implements OnClickListener
         addMenuItemButton = (Button) findViewById(R.id.add_menu_item_button);
         addMenuItemButton.setOnClickListener(this);
         
-        // create adapters and link them to each other
-        menuListAdapter = new STMenuListAdapter(this);
-        personListAdapter = new STPersonListAdapter(this, R.layout.contact);
-        menuListAdapter.setPersonListAdapter(personListAdapter);
+        STDataController dataController = new STDataController();
+        
+        // create adapters
+        menuListAdapter = new STMenuListAdapter(this, dataController);
+        personListAdapter = new STPersonListAdapter(this, R.layout.contact, dataController);
         personListAdapter.setMenuListAdapter(menuListAdapter);
 
         // set up the menu list view
@@ -56,20 +57,19 @@ public class STab extends Activity implements OnClickListener
         menuListView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 STMenuListAdapter mla = (STMenuListAdapter) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter();
-                if (mla.getTotalView() == v)
+                if (mla.getDataController().getTotalView() == v)
                     return;
                 
                 LinearLayout layout = (LinearLayout) v;
                 CheckedTextView menuItemPrice = (CheckedTextView) layout.getChildAt(1);
                 menuItemPrice.toggle();
                 
-                STPersonListAdapter pla = mla.getPersonListAdapter();
-                pla.setSelection(position, menuItemPrice.isChecked());                
-                
-                mla.updateTotal();
+                mla.getDataController().setSelection(position, menuItemPrice.isChecked());
+                mla.getDataController().updateTotal();
             }
         });
-        menuListAdapter.setTotalView((LinearLayout) menuListTotal);
+        
+        dataController.setTotalView((LinearLayout) menuListTotal);
         
         // set up the person gallery
         Gallery personListView = (Gallery) findViewById(R.id.person_list_view);
@@ -77,7 +77,8 @@ public class STab extends Activity implements OnClickListener
         personListView.setOnItemSelectedListener(new OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
                 STPersonListAdapter adapter = (STPersonListAdapter) parent.getAdapter();
-                adapter.getMenuListAdapter().updateTotal();
+                adapter.getDataController().setCurrentPersonId(position);
+                adapter.getDataController().updateTotal();
                 adapter.getMenuListAdapter().notifyDataSetChanged();
             }
 

@@ -1,7 +1,6 @@
 package com.scarredions.stab;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -20,23 +19,19 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
     private final NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
     private Context mContext;
-    private LinearLayout totalView;
-    private STPersonListAdapter personListAdapter;
-    private ArrayList<String> menuItemNames;
-    private ArrayList<Double> menuItemPrices;
-    
-    public STMenuListAdapter(Context mContext) {
+    private STDataController dataController;
+        
+    public STMenuListAdapter(Context mContext, STDataController dataController) {
         this.mContext = mContext;
-        menuItemNames = new ArrayList<String>();
-        menuItemPrices = new ArrayList<Double>();
+        this.dataController = dataController;
     }
     
-    public STPersonListAdapter getPersonListAdapter() {
-        return personListAdapter;
+    public STDataController getDataController() {
+        return dataController;
     }
     
     public int getCount() {
-        return menuItemNames.size();
+        return dataController.getMenuItemCount();
     }
     
     public long getItemId(int position) {
@@ -48,64 +43,33 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        LinearLayout menuItem;
+        LinearLayout menuItemView;
         TextView menuItemName;
         CheckedTextView menuItemPrice;
         
         if (convertView == null) {
             LayoutInflater factory = LayoutInflater.from(getContext());            
-            menuItem = (LinearLayout) factory.inflate(R.layout.list_item, null);            
+            menuItemView = (LinearLayout) factory.inflate(R.layout.list_item, null);
         } else {
-            menuItem = (LinearLayout) convertView;
+            menuItemView = (LinearLayout) convertView;
         }
         
-        menuItemName = (TextView) menuItem.getChildAt(0);
-        menuItemName.setText(this.menuItemNames.get(position));
+        menuItemName = (TextView) menuItemView.getChildAt(0);
+        menuItemName.setText(dataController.getMenuItemName(position));
         
-        menuItemPrice = (CheckedTextView) menuItem.getChildAt(1);
-        menuItemPrice.setText(getFormattedPrice(menuItemPrices.get(position)));
-        menuItemPrice.setChecked(personListAdapter.currentPersonHasSelected(position));
+        menuItemPrice = (CheckedTextView) menuItemView.getChildAt(1);
+        menuItemPrice.setText(getFormattedPrice(dataController.getMenuItemPrice(position)));
+        menuItemPrice.setChecked(dataController.currentPersonHasSelected(position));
         
-        return menuItem;        
+        return menuItemView;        
     }
 
     public Object getItem(int position) {
-        return menuItemNames.get(position);
+        return dataController.getMenuItemName(position);
     }
     
-    public String getItemName(int position) {
-        return (String) getItem(position);
-    }
-    
-    public Double getItemPrice(int position) {
-        return menuItemPrices.get(position);
-    }
-
-    public void setPersonListAdapter(STPersonListAdapter pla) {
-        this.personListAdapter = pla;
-    }
-    
-    public void setTotalView(LinearLayout totalView) {
-        this.totalView = totalView;
-    }
-    
-    public LinearLayout getTotalView() {
-        return totalView;
-    }
-    
-    public void updateTotal(Double newTotal) {
-        TextView total = (TextView) totalView.getChildAt(1);
-        total.setText(getFormattedPrice(newTotal));
-    }
-        
     public void add(String itemName, Double itemPrice) {
-        menuItemNames.add(itemName);
-        menuItemPrices.add(itemPrice);
-    }
-    
-    public void updateTotal() {
-        TextView total = (TextView) totalView.getChildAt(1);
-        total.setText(getFormattedPrice(personListAdapter.getTotal()));
+        dataController.addMenuItem(itemName, itemPrice);
     }
     
     public void onClick(DialogInterface dialog, int whichButton) {
