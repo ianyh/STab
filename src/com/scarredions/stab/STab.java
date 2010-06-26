@@ -12,13 +12,13 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.scarredions.stab.STPersonListAdapter;
 
 // TODO: bind to contacts for people/images
 
-public class STab extends Activity
-    implements OnClickListener
+public class STab extends Activity implements OnClickListener
 {    
     
     private STMenuListAdapter menuListAdapter;
@@ -40,7 +40,7 @@ public class STab extends Activity
         addMenuItemButton.setOnClickListener(this);
         
         // create adapters and link them to each other
-        menuListAdapter = new STMenuListAdapter(this);//, android.R.layout.simple_list_item_multiple_choice);
+        menuListAdapter = new STMenuListAdapter(this);
         personListAdapter = new STPersonListAdapter(this, R.layout.contact);
         menuListAdapter.setPersonListAdapter(personListAdapter);
         personListAdapter.setMenuListAdapter(menuListAdapter);
@@ -52,21 +52,31 @@ public class STab extends Activity
         menuListView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 LinearLayout layout = (LinearLayout) v;
+                CheckedTextView menuItemPrice = (CheckedTextView) layout.getChildAt(1);
+                menuItemPrice.toggle();
                 
-                ((CheckedTextView) layout.getChildAt(1)).toggle();
+                STPersonListAdapter pla = ((STMenuListAdapter) parent.getAdapter()).getPersonListAdapter();
+                pla.setSelection(position, menuItemPrice.isChecked());
             }
         });
         
         // set up the person gallery
         Gallery personListView = (Gallery) findViewById(R.id.person_list_view);
         personListView.setAdapter(personListAdapter);
-        personListView.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+        personListView.setOnItemSelectedListener(new OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
                 STPersonListAdapter adapter = (STPersonListAdapter) parent.getAdapter();
+                adapter.getMenuListAdapter().notifyDataSetChanged();
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {
+                STPersonListAdapter adapter = (STPersonListAdapter) parent.getAdapter();
+                parent.setSelection(0);
                 adapter.getMenuListAdapter().notifyDataSetChanged();
             }
         });
         personListAdapter.add("you");
+        personListAdapter.setPersonListView(personListView);
     }
     
     public Button fixAndGetAddPersonButton()

@@ -18,6 +18,7 @@ import android.widget.TextView;
 public class STMenuListAdapter extends BaseAdapter implements DialogInterface.OnClickListener {
     
     private final NumberFormat formatter = NumberFormat.getCurrencyInstance();
+    
     private STPersonListAdapter personListAdapter;
     private Context mContext;
     private ArrayList<String> menuItemNames;
@@ -46,15 +47,25 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
+        LinearLayout menuItem;
+        TextView menuItemName;
+        CheckedTextView menuItemPrice;
+        
         if (convertView == null) {
-            LayoutInflater factory = LayoutInflater.from(getContext());
-            LinearLayout menuItem = (LinearLayout) factory.inflate(R.layout.list_item, null);
-            ((TextView) menuItem.getChildAt(0)).setText(this.menuItemNames.get(position));
-            ((CheckedTextView) menuItem.getChildAt(1)).setText(getFormattedPrice(this.menuItemPrices.get(position)));
-            return menuItem;
+            LayoutInflater factory = LayoutInflater.from(getContext());            
+            menuItem = (LinearLayout) factory.inflate(R.layout.list_item, null);            
         } else {
-            return convertView;
+            menuItem = (LinearLayout) convertView;
         }
+        
+        menuItemName = (TextView) menuItem.getChildAt(0);
+        menuItemName.setText(this.menuItemNames.get(position));
+        
+        menuItemPrice = (CheckedTextView) menuItem.getChildAt(1);
+        menuItemPrice.setText(getFormattedPrice(menuItemPrices.get(position)));
+        menuItemPrice.setChecked(personListAdapter.currentPersonHasSelected(position));
+        
+        return menuItem;        
     }
 
     public Object getItem(int position) {
