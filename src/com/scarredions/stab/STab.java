@@ -2,6 +2,7 @@ package com.scarredions.stab;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -47,6 +48,8 @@ public class STab extends Activity implements OnClickListener
 
         // set up the menu list view
         ListView menuListView = (ListView) findViewById(R.id.menu_list_view);
+        View menuListTotal = getMenuListTotalView();
+        menuListView.addFooterView(menuListTotal);
         menuListView.setAdapter(menuListAdapter);
         menuListView.setClickable(true);
         menuListView.setOnItemClickListener(new OnItemClickListener() {
@@ -86,6 +89,12 @@ public class STab extends Activity implements OnClickListener
         params.addRule(RelativeLayout.ABOVE, R.id.divider);
         b.setLayoutParams(params);        
         return b;
+    }
+    
+    public View getMenuListTotalView()
+    {
+        LayoutInflater factory = LayoutInflater.from(this);
+        return factory.inflate(R.layout.list_total, null);
     }
     
     public void onClick(View v)
