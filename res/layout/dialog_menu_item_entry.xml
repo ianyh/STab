@@ -46,6 +46,7 @@
 	android:autoText="false"
 	android:capitalize="none"
 	android:gravity="fill_horizontal"
+	android:inputType="numberDecimal"
 	android:textAppearance="?android:attr/textAppearanceMedium" />
 	
 

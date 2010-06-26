@@ -37,6 +37,7 @@ public class STPersonListAdapter extends ArrayAdapter<String> implements DialogI
         }
     }
     
+    // TODO: make entry autocomplete with Contacts
     public void addPersonByDialog() {
         LayoutInflater factory = LayoutInflater.from(this.getContext());
         final View textEntryView = factory.inflate(R.layout.dialog_person_entry, null);

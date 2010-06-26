@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.Gallery;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.AdapterView.OnItemClickListener;
@@ -15,7 +16,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.scarredions.stab.STPersonListAdapter;
 
 // TODO: bind to contacts for people/images
-// TODO: bind to contacts for autocomplete
 
 public class STab extends Activity
     implements OnClickListener
@@ -40,7 +40,7 @@ public class STab extends Activity
         addMenuItemButton.setOnClickListener(this);
         
         // create adapters and link them to each other
-        menuListAdapter = new STMenuListAdapter(this, android.R.layout.simple_list_item_multiple_choice);
+        menuListAdapter = new STMenuListAdapter(this);//, android.R.layout.simple_list_item_multiple_choice);
         personListAdapter = new STPersonListAdapter(this, R.layout.contact);
         menuListAdapter.setPersonListAdapter(personListAdapter);
         personListAdapter.setMenuListAdapter(menuListAdapter);
@@ -51,7 +51,9 @@ public class STab extends Activity
         menuListView.setClickable(true);
         menuListView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                ((CheckedTextView) v).toggle();
+                LinearLayout layout = (LinearLayout) v;
+                
+                ((CheckedTextView) layout.getChildAt(1)).toggle();
             }
         });
         
