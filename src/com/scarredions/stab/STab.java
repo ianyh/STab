@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.Gallery;
+import android.widget.HeaderViewListAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -54,14 +55,21 @@ public class STab extends Activity implements OnClickListener
         menuListView.setClickable(true);
         menuListView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                STMenuListAdapter mla = (STMenuListAdapter) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter();
+                if (mla.getTotalView() == v)
+                    return;
+                
                 LinearLayout layout = (LinearLayout) v;
                 CheckedTextView menuItemPrice = (CheckedTextView) layout.getChildAt(1);
                 menuItemPrice.toggle();
                 
-                STPersonListAdapter pla = ((STMenuListAdapter) parent.getAdapter()).getPersonListAdapter();
-                pla.setSelection(position, menuItemPrice.isChecked());
+                STPersonListAdapter pla = mla.getPersonListAdapter();
+                pla.setSelection(position, menuItemPrice.isChecked());                
+                
+                mla.updateTotal();
             }
         });
+        menuListAdapter.setTotalView((LinearLayout) menuListTotal);
         
         // set up the person gallery
         Gallery personListView = (Gallery) findViewById(R.id.person_list_view);
@@ -69,6 +77,7 @@ public class STab extends Activity implements OnClickListener
         personListView.setOnItemSelectedListener(new OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
                 STPersonListAdapter adapter = (STPersonListAdapter) parent.getAdapter();
+                adapter.getMenuListAdapter().updateTotal();
                 adapter.getMenuListAdapter().notifyDataSetChanged();
             }
 

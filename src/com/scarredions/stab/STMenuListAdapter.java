@@ -18,9 +18,10 @@ import android.widget.TextView;
 public class STMenuListAdapter extends BaseAdapter implements DialogInterface.OnClickListener {
     
     private final NumberFormat formatter = NumberFormat.getCurrencyInstance();
-    
-    private STPersonListAdapter personListAdapter;
+
     private Context mContext;
+    private LinearLayout totalView;
+    private STPersonListAdapter personListAdapter;
     private ArrayList<String> menuItemNames;
     private ArrayList<Double> menuItemPrices;
     
@@ -71,14 +72,40 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
     public Object getItem(int position) {
         return menuItemNames.get(position);
     }
+    
+    public String getItemName(int position) {
+        return (String) getItem(position);
+    }
+    
+    public Double getItemPrice(int position) {
+        return menuItemPrices.get(position);
+    }
 
     public void setPersonListAdapter(STPersonListAdapter pla) {
         this.personListAdapter = pla;
+    }
+    
+    public void setTotalView(LinearLayout totalView) {
+        this.totalView = totalView;
+    }
+    
+    public LinearLayout getTotalView() {
+        return totalView;
+    }
+    
+    public void updateTotal(Double newTotal) {
+        TextView total = (TextView) totalView.getChildAt(1);
+        total.setText(getFormattedPrice(newTotal));
     }
         
     public void add(String itemName, Double itemPrice) {
         menuItemNames.add(itemName);
         menuItemPrices.add(itemPrice);
+    }
+    
+    public void updateTotal() {
+        TextView total = (TextView) totalView.getChildAt(1);
+        total.setText(getFormattedPrice(personListAdapter.getTotal()));
     }
     
     public void onClick(DialogInterface dialog, int whichButton) {

@@ -2,6 +2,7 @@ package com.scarredions.stab;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import android.app.AlertDialog;
@@ -46,9 +47,45 @@ public class STPersonListAdapter extends ArrayAdapter<String> implements DialogI
         nextId++;
     }
     
+    public int getCurrentPersonId() {
+        return (int) personListView.getSelectedItemId();
+    }
     public Set<Integer> getCurrentPersonSelections() {
-        int currentPersonId = (int) personListView.getSelectedItemId();
+        int currentPersonId = getCurrentPersonId();
         return personSelections.get(Integer.valueOf(currentPersonId));
+    }
+    
+    public int getNumberOfPeopleWithSelection(int menuListPosition) {
+        int counter = 0;
+        Iterator<Set<Integer>> selectionsIter = personSelections.values().iterator();
+        Set<Integer> selections;
+        Integer integer;
+        
+        while(selectionsIter.hasNext()) {
+            selections = selectionsIter.next(); 
+            Iterator<Integer> integerIter = selections.iterator();
+            while(integerIter.hasNext()) {
+                integer = integerIter.next();
+                if (integer.intValue() == menuListPosition)
+                    counter++;
+            }
+        }
+        
+        return counter;
+    }
+    
+    public Double getTotal() {
+        double total = 0;
+//        int position = getCurrentPersonId();
+        Set<Integer> selections = getCurrentPersonSelections();
+        Iterator<Integer> selectionsIter = selections.iterator();
+        Integer integer;
+        while(selectionsIter.hasNext()) {
+            integer = selectionsIter.next();
+            total += menuListAdapter.getItemPrice(integer.intValue()).doubleValue() / 
+                getNumberOfPeopleWithSelection(integer.intValue());
+        }
+        return total;
     }
     
     public void setSelection(int position, boolean checked) {
