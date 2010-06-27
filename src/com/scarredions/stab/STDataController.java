@@ -14,6 +14,10 @@ import android.widget.TextView;
 public class STDataController {
     
     private final NumberFormat formatter = NumberFormat.getCurrencyInstance();
+    // TODO: get this from location?
+    private final double tax = 0.08;
+    // TODO: make this a setting?
+    private final double tip = 0.02;
     
     private HashMap<Integer, HashSet<Integer>> personToSelections;
     private int currentPersonId;
@@ -21,7 +25,7 @@ public class STDataController {
     
     private ArrayList<MenuItem> menuItems;
     
-    private LinearLayout totalView;
+    private LinearLayout menuListFooter;
     
     public STDataController() {
         personToSelections = new HashMap<Integer, HashSet<Integer>>();
@@ -68,7 +72,37 @@ public class STDataController {
         return counter;
     }
     
+    public Double getTax() {
+        return getTotal() * tax;
+    }
+    
+    public Double getTip() {
+        return (getTotal() + getTax()) * tip;
+    }
+    
     public Double getTotal() {
+        double total = 0;
+        
+        Iterator<MenuItem> menuItemsIter = menuItems.iterator();
+        MenuItem menuItem;
+        
+        while(menuItemsIter.hasNext()) {
+            menuItem = menuItemsIter.next();
+            total += menuItem.getPrice().doubleValue();
+        }
+        
+        return Double.valueOf(total);
+    }
+    
+    public Double getPersonTax() {
+        return getTax() / personToSelections.size();
+    }
+    
+    public Double getPersonTip() {
+        return getTip() / personToSelections.size();
+    }
+    
+    public Double getPersonTotal() {
         double total = 0;
         Set<Integer> selections = getCurrentPersonSelections();
         Iterator<Integer> selectionsIter = selections.iterator();
@@ -101,8 +135,16 @@ public class STDataController {
         return menuItems.size();
     }
     
+    public View getTaxView() {
+        return menuListFooter.getChildAt(0);
+    }
+    
+    public View getTipView() {
+        return menuListFooter.getChildAt(1);
+    }
+    
     public View getTotalView() {
-        return totalView;
+        return menuListFooter.getChildAt(2);
     }
     
     public void addPerson(String name) {
@@ -113,11 +155,11 @@ public class STDataController {
     public void addMenuItem(String name, Double price) {
         menuItems.add(new MenuItem(name, price));
     }
-    
-    public void setTotalView(LinearLayout totalView) {
-        this.totalView = totalView;
+
+    public void setMenuListFooter(LinearLayout footerView) {
+        menuListFooter = footerView;
     }
-    
+        
     public void setCurrentPersonId(int personId) {
         currentPersonId = personId;
     }
@@ -130,10 +172,20 @@ public class STDataController {
             selections.remove(Integer.valueOf(menuListPosition));
         }
     }
+
+    public void updateTax() {
+        TextView tax = (TextView) ((LinearLayout) getTaxView()).getChildAt(1);
+        tax.setText(getFormattedPrice(getPersonTax()));
+    }
+    
+    public void updateTip() {
+        TextView tip = (TextView) ((LinearLayout) getTipView()).getChildAt(1);
+        tip.setText(getFormattedPrice(getPersonTip()));
+    }
     
     public void updateTotal() {
-        TextView total = (TextView) totalView.getChildAt(1);
-        total.setText(getFormattedPrice(getTotal()));
+        TextView total = (TextView) ((LinearLayout) getTotalView()).getChildAt(1);
+        total.setText(getFormattedPrice(getPersonTotal() + getPersonTax() + getPersonTip()));
     }
     
     public class MenuItem {

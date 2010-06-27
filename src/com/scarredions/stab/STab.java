@@ -17,6 +17,7 @@ import android.widget.HeaderViewListAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 
@@ -49,10 +50,18 @@ public class STab extends Activity implements OnClickListener
         personListAdapter = new STPersonListAdapter(this, R.layout.contact, dataController);
         personListAdapter.setMenuListAdapter(menuListAdapter);
 
+        View menuListTotal = inflateMenuListTotalView();
+        View menuListTax = inflateMenuListTaxView();
+        View menuListTip = inflateMenuListTipView();
+        LinearLayout footerLayout = new LinearLayout(this);
+        footerLayout.setOrientation(LinearLayout.VERTICAL);
+        footerLayout.addView(menuListTax); 
+        footerLayout.addView(menuListTip);       
+        footerLayout.addView(menuListTotal);
+        
         // set up the menu list view
         ListView menuListView = (ListView) findViewById(R.id.menu_list_view);
-        View menuListTotal = inflateMenuListTotalView();
-        menuListView.addFooterView(menuListTotal);
+        menuListView.addFooterView(footerLayout);
         menuListView.setAdapter(menuListAdapter);
         menuListView.setClickable(true);
         menuListView.setOnItemClickListener(new OnItemClickListener() {
@@ -66,11 +75,13 @@ public class STab extends Activity implements OnClickListener
                 menuItemPrice.toggle();
                 
                 mla.getDataController().setSelection(position, menuItemPrice.isChecked());
+                mla.getDataController().updateTax();  
+                mla.getDataController().updateTip();
                 mla.getDataController().updateTotal();
             }
         });
         
-        dataController.setTotalView((LinearLayout) menuListTotal);
+        dataController.setMenuListFooter(footerLayout);
         
         // set up the person gallery
         Gallery personListView = (Gallery) findViewById(R.id.person_list_view);
@@ -79,6 +90,8 @@ public class STab extends Activity implements OnClickListener
             public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
                 STPersonListAdapter adapter = (STPersonListAdapter) parent.getAdapter();
                 adapter.getDataController().setCurrentPersonId(position);
+                adapter.getDataController().updateTax();
+                adapter.getDataController().updateTip();
                 adapter.getDataController().updateTotal();
                 adapter.getMenuListAdapter().notifyDataSetChanged();
             }
@@ -112,6 +125,21 @@ public class STab extends Activity implements OnClickListener
     {
         LayoutInflater factory = LayoutInflater.from(this);
         return factory.inflate(R.layout.list_total, null);
+    }
+    
+    public View inflateMenuListTaxView() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        LinearLayout taxView = (LinearLayout) factory.inflate(R.layout.list_total, null);
+        ((TextView) taxView.findViewById(R.id.list_footer_text)).setText("Tax");
+        
+        return taxView;
+    }
+    
+    public View inflateMenuListTipView() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        LinearLayout tipView = (LinearLayout) factory.inflate(R.layout.list_total, null);
+        ((TextView) tipView.findViewById(R.id.list_footer_text)).setText("Tip");        
+        return tipView;
     }
     
     public Cursor getContacts() {
