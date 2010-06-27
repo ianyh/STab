@@ -94,7 +94,7 @@ public class STab extends Activity implements OnClickListener
         
         Cursor cursor = getContacts();
         STContactListAdapter contactsAdapter = new STContactListAdapter(this, 
-                android.R.layout.simple_dropdown_item_1line, cursor,
+                R.layout.autocomplete_list_item, cursor,
                 new String[] { ContactsContract.Data.DISPLAY_NAME }, new int[] { android.R.id.text1 });
         personListAdapter.setContactsAutocompleteAdapter(contactsAdapter);
     }
