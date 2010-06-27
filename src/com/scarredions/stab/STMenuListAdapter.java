@@ -53,10 +53,10 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
             menuItemView = (LinearLayout) convertView;
         }
         
-        menuItemName = (TextView) menuItemView.getChildAt(0);
+        menuItemName = (TextView) menuItemView.findViewById(R.id.list_item_name);
         menuItemName.setText(dataController.getMenuItemName(position));
         
-        menuItemPrice = (CheckedTextView) menuItemView.getChildAt(1);
+        menuItemPrice = (CheckedTextView) menuItemView.findViewById(R.id.list_item_price);
         menuItemPrice.setText(getFormattedPrice(dataController.getMenuItemPrice(position)));
         menuItemPrice.setChecked(dataController.currentPersonHasSelected(position));
         

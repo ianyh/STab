@@ -21,7 +21,6 @@ public class STDataController implements OnClickListener {
     private final NumberFormat formatter = NumberFormat.getCurrencyInstance();
     // TODO: get this from location?
     private double tax = 0.08;
-    // TODO: make this a setting?
     private double tip = 0.2;
     
     private HashMap<Integer, HashSet<Integer>> personToSelections;
@@ -161,15 +160,15 @@ public class STDataController implements OnClickListener {
     }
     
     public View getTaxView() {
-        return menuListFooter.getChildAt(0);
+        return menuListFooter.getChildAt(STConstants.MENU_LIST_FOOTER_TAX_POSITION);
     }
     
     public View getTipView() {
-        return menuListFooter.getChildAt(1);
+        return menuListFooter.getChildAt(STConstants.MENU_LIST_FOOTER_TIP_POSITION);
     }
     
     public View getTotalView() {
-        return menuListFooter.getChildAt(2);
+        return menuListFooter.getChildAt(STConstants.MENU_LIST_FOOTER_TOTAL_POSITION);
     }
     
     public void addPerson(String name) {
@@ -191,14 +190,14 @@ public class STDataController implements OnClickListener {
     
     public void setTaxPercentage(double newTax) {
         tax = newTax;
-        TextView taxView = (TextView) ((LinearLayout) getTaxView()).getChildAt(0);
+        TextView taxView = (TextView) ((LinearLayout) getTaxView()).findViewById(R.id.list_footer_text);
         taxView.setText("Tax (" + getFormattedTaxPercentage() + ")");
         updateTax();
     }
     
     public void setTipPercentage(double newTip) {
         tip = newTip;
-        TextView tipView = (TextView) ((LinearLayout) getTipView()).getChildAt(0);
+        TextView tipView = (TextView) ((LinearLayout) getTipView()).getChildAt(R.id.list_footer_text);
         tipView.setText("Tip (" + getFormattedTipPercentage() + ")");
         updateTip();
     }
@@ -217,28 +216,28 @@ public class STDataController implements OnClickListener {
     }
     
     public void updateTax() {
-        TextView tax = (TextView) ((LinearLayout) getTaxView()).getChildAt(1);
+        TextView tax = (TextView) ((LinearLayout) getTaxView()).findViewById(R.id.list_footer_value);
         tax.setText(getFormattedPrice(getPersonTax()));
         updateTip();
     }
     
     public void updateTip() {
-        TextView tip = (TextView) ((LinearLayout) getTipView()).getChildAt(1);
+        TextView tip = (TextView) ((LinearLayout) getTipView()).findViewById(R.id.list_footer_value);
         tip.setText(getFormattedPrice(getPersonTip()));
         updateTotal();
     }
     
     public void updateTotal() {
-        TextView total = (TextView) ((LinearLayout) getTotalView()).getChildAt(1);
+        TextView total = (TextView) ((LinearLayout) getTotalView()).findViewById(R.id.list_footer_value);
         total.setText(getFormattedPrice(getPersonTotal() + getPersonTax() + getPersonTip()));
     }
     
     public void editTaxByDialog() {
-        editByDialog("Tax", Double.valueOf(getTaxPercentage()));
+        editByDialog(STConstants.TAX, Double.valueOf(getTaxPercentage()));
     }
     
     public void editTipByDialog() {
-        editByDialog("Tip", Double.valueOf(getTipPercentage()));
+        editByDialog(STConstants.TIP, Double.valueOf(getTipPercentage()));
     }
 
     public void onClick(DialogInterface dialog, int whichButton) {
@@ -257,8 +256,8 @@ public class STDataController implements OnClickListener {
     private void editByDialog(String type, Double value) {
         LayoutInflater factory = LayoutInflater.from(menuListFooter.getContext());
         LinearLayout dialogLayout = (LinearLayout) factory.inflate(R.layout.dialog_tax_or_tip_entry, null);
-        ((TextView) dialogLayout.getChildAt(0)).setText(type);
-        ((EditText) dialogLayout.getChildAt(1)).setText(value.toString());
+        ((TextView) dialogLayout.findViewById(R.id.value_view)).setText(type);
+        ((EditText) dialogLayout.findViewById(R.id.value_edit)).setText(value.toString());
         
         new AlertDialog.Builder(menuListFooter.getContext())
             .setView(dialogLayout)

@@ -27,9 +27,6 @@ import com.scarredions.stab.STPersonListAdapter;
 
 public class STab extends Activity implements OnClickListener
 {
-    private final int MENU_EDIT_TAX = 0;
-    private final int MENU_EDIT_TIP = 1;
-    
     private STMenuListAdapter menuListAdapter;
     private STPersonListAdapter personListAdapter;
     private STDataController dataController;
@@ -76,13 +73,11 @@ public class STab extends Activity implements OnClickListener
                     return;
                 
                 LinearLayout layout = (LinearLayout) v;
-                CheckedTextView menuItemPrice = (CheckedTextView) layout.getChildAt(1);
+                CheckedTextView menuItemPrice = (CheckedTextView) layout.findViewById(R.id.list_item_price);
                 menuItemPrice.toggle();
                 
                 mla.getDataController().setSelection(position, menuItemPrice.isChecked());
-                mla.getDataController().updateTax();  
-                mla.getDataController().updateTip();
-                mla.getDataController().updateTotal();
+                mla.getDataController().updateFooter();
             }
         });
         
@@ -115,17 +110,17 @@ public class STab extends Activity implements OnClickListener
     }
     
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_EDIT_TAX, 0, "Edit Tax");
-        menu.add(0, MENU_EDIT_TIP, 0, "Edit Tip");
+        menu.add(0, STConstants.MENU_EDIT_TAX, 0, "Edit Tax");
+        menu.add(0, STConstants.MENU_EDIT_TIP, 0, "Edit Tip");
         return true;
     }
     
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-        case MENU_EDIT_TAX:
+        case STConstants.MENU_EDIT_TAX:
             dataController.editTaxByDialog();
             return true;
-        case MENU_EDIT_TIP:
+        case STConstants.MENU_EDIT_TIP:
             dataController.editTipByDialog();
             return true;
         }
@@ -151,7 +146,7 @@ public class STab extends Activity implements OnClickListener
     public View inflateMenuListTaxView() {
         LayoutInflater factory = LayoutInflater.from(this);
         LinearLayout taxView = (LinearLayout) factory.inflate(R.layout.list_total, null);
-        String taxText = "Tax (" + dataController.getFormattedTaxPercentage() + ")";
+        String taxText = STConstants.TAX + " (" + dataController.getFormattedTaxPercentage() + ")";
         ((TextView) taxView.findViewById(R.id.list_footer_text)).setText(taxText);
         
         return taxView;
@@ -160,7 +155,7 @@ public class STab extends Activity implements OnClickListener
     public View inflateMenuListTipView() {
         LayoutInflater factory = LayoutInflater.from(this);
         LinearLayout tipView = (LinearLayout) factory.inflate(R.layout.list_total, null);
-        String tipText = "Tip (" + dataController.getFormattedTipPercentage() + ")";
+        String tipText = STConstants.TIP + " (" + dataController.getFormattedTipPercentage() + ")";
         ((TextView) tipView.findViewById(R.id.list_footer_text)).setText(tipText);
         
         return tipView;
