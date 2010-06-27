@@ -70,6 +70,13 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
     public void add(String itemName, Double itemPrice) {
         dataController.addMenuItem(itemName, itemPrice);
     }
+    
+    public void notifyDataSetChanged() {
+        dataController.updateTax();
+        dataController.updateTip();
+        dataController.updateTotal();
+        super.notifyDataSetChanged();
+    }
         
     public void onClick(DialogInterface dialog, int whichButton) {
         if (whichButton == DialogInterface.BUTTON_POSITIVE) {

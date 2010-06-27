@@ -15,9 +15,9 @@ public class STDataController {
     
     private final NumberFormat formatter = NumberFormat.getCurrencyInstance();
     // TODO: get this from location?
-    private final double tax = 0.08;
+    private double tax = 0.08;
     // TODO: make this a setting?
-    private final double tip = 0.02;
+    private double tip = 0.2;
     
     private HashMap<Integer, HashSet<Integer>> personToSelections;
     private int currentPersonId;
@@ -70,6 +70,22 @@ public class STDataController {
         }
         
         return counter;
+    }
+    
+    public double getTaxPercentage() {
+        return tax;
+    }
+    
+    public double getTipPercentage() {
+        return tip;
+    }
+    
+    public String getFormattedTaxPercentage() {
+        return NumberFormat.getPercentInstance().format(getTaxPercentage());
+    }
+    
+    public String getFormattedTipPercentage() {
+        return NumberFormat.getPercentInstance().format(getTipPercentage());
     }
     
     public Double getTax() {
@@ -135,6 +151,10 @@ public class STDataController {
         return menuItems.size();
     }
     
+    public View getMenuListFooter() {
+        return menuListFooter;
+    }
+    
     public View getTaxView() {
         return menuListFooter.getChildAt(0);
     }
@@ -162,6 +182,14 @@ public class STDataController {
         
     public void setCurrentPersonId(int personId) {
         currentPersonId = personId;
+    }
+    
+    public void setTaxPercentage(double newTax) {
+        tax = newTax;
+    }
+    
+    public void setTipPercentage(double newTip) {
+        tip = newTip;
     }
     
     public void setSelection(int menuListPosition, boolean checked) {

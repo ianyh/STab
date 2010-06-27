@@ -9,6 +9,7 @@ import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckedTextView;
@@ -27,6 +28,7 @@ public class STab extends Activity implements OnClickListener
 {
     private STMenuListAdapter menuListAdapter;
     private STPersonListAdapter personListAdapter;
+    private STDataController dataController;
     private Button addPersonButton;
     private Button addMenuItemButton;
     
@@ -43,7 +45,7 @@ public class STab extends Activity implements OnClickListener
         addMenuItemButton = (Button) findViewById(R.id.add_menu_item_button);
         addMenuItemButton.setOnClickListener(this);
         
-        STDataController dataController = new STDataController();
+        dataController = new STDataController();
         
         // create adapters
         menuListAdapter = new STMenuListAdapter(this, dataController);
@@ -54,20 +56,20 @@ public class STab extends Activity implements OnClickListener
         View menuListTax = inflateMenuListTaxView();
         View menuListTip = inflateMenuListTipView();
         LinearLayout footerLayout = new LinearLayout(this);
+        footerLayout.setClickable(false);
         footerLayout.setOrientation(LinearLayout.VERTICAL);
         footerLayout.addView(menuListTax); 
         footerLayout.addView(menuListTip);       
         footerLayout.addView(menuListTotal);
-        
+                
         // set up the menu list view
         ListView menuListView = (ListView) findViewById(R.id.menu_list_view);
         menuListView.addFooterView(footerLayout);
         menuListView.setAdapter(menuListAdapter);
-        menuListView.setClickable(true);
         menuListView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 STMenuListAdapter mla = (STMenuListAdapter) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter();
-                if (mla.getDataController().getTotalView() == v)
+                if (mla.getDataController().getMenuListFooter() == v)
                     return;
                 
                 LinearLayout layout = (LinearLayout) v;
@@ -130,7 +132,8 @@ public class STab extends Activity implements OnClickListener
     public View inflateMenuListTaxView() {
         LayoutInflater factory = LayoutInflater.from(this);
         LinearLayout taxView = (LinearLayout) factory.inflate(R.layout.list_total, null);
-        ((TextView) taxView.findViewById(R.id.list_footer_text)).setText("Tax");
+        String taxText = "Tax (" + dataController.getFormattedTaxPercentage() + ")";
+        ((TextView) taxView.findViewById(R.id.list_footer_text)).setText(taxText);
         
         return taxView;
     }
@@ -138,7 +141,8 @@ public class STab extends Activity implements OnClickListener
     public View inflateMenuListTipView() {
         LayoutInflater factory = LayoutInflater.from(this);
         LinearLayout tipView = (LinearLayout) factory.inflate(R.layout.list_total, null);
-        ((TextView) tipView.findViewById(R.id.list_footer_text)).setText("Tip");        
+        String tipText = "Tip (" + dataController.getFormattedTipPercentage() + ")";
+        ((TextView) tipView.findViewById(R.id.list_footer_text)).setText(tipText);        
         return tipView;
     }
     
