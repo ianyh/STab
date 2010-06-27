@@ -8,9 +8,7 @@ import android.widget.Filterable;
 import android.widget.SimpleCursorAdapter;
 
 public class STContactListAdapter extends SimpleCursorAdapter implements Filterable {
-    
-    public static int CONTACT_NAME_COLUMN = 1;
-    
+
     private ContentResolver mContent;
 
     public STContactListAdapter(Context context, int layout, Cursor c, String[] from, int[] to) {
@@ -20,7 +18,8 @@ public class STContactListAdapter extends SimpleCursorAdapter implements Filtera
     
     @Override
     public String convertToString(Cursor cursor) {
-        return cursor.getString(CONTACT_NAME_COLUMN);
+        int index = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
+        return cursor.getString(index);
     }
     
     @Override
@@ -38,14 +37,9 @@ public class STContactListAdapter extends SimpleCursorAdapter implements Filtera
             buffer.append(") GLOB?");
             args = new String[] { constraint.toString().toUpperCase() + "*" };
         }
-        
-        String[] projection = new String[] {
-                ContactsContract.Contacts._ID,
-                ContactsContract.Contacts.DISPLAY_NAME
-        };
-        
+                
         return mContent.query(ContactsContract.Contacts.CONTENT_URI, 
-                projection, 
+                STConstants.CONTACTS_PROJECTION, 
                 buffer.toString(), 
                 args, 
                 null);

@@ -174,6 +174,7 @@ public class STDataController implements OnClickListener {
     public void addPerson(String name) {
         personToSelections.put(Integer.valueOf(nextPersonId), new HashSet<Integer>());
         nextPersonId++;
+        updateFooter();
     }
     
     public void addMenuItem(String name, Double price) {
@@ -191,14 +192,14 @@ public class STDataController implements OnClickListener {
     public void setTaxPercentage(double newTax) {
         tax = newTax;
         TextView taxView = (TextView) ((LinearLayout) getTaxView()).findViewById(R.id.list_footer_text);
-        taxView.setText("Tax (" + getFormattedTaxPercentage() + ")");
+        taxView.setText(STConstants.TAX + " (" + getFormattedTaxPercentage() + ")");
         updateTax();
     }
     
     public void setTipPercentage(double newTip) {
         tip = newTip;
         TextView tipView = (TextView) ((LinearLayout) getTipView()).getChildAt(R.id.list_footer_text);
-        tipView.setText("Tip (" + getFormattedTipPercentage() + ")");
+        tipView.setText(STConstants.TIP + " (" + getFormattedTipPercentage() + ")");
         updateTip();
     }
     

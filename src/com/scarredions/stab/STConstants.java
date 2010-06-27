@@ -1,5 +1,7 @@
 package com.scarredions.stab;
 
+import android.provider.ContactsContract;
+
 public class STConstants {
     /**
      * Constants for switching on menu selection
@@ -20,4 +22,13 @@ public class STConstants {
      */
     public static final String TAX = "Tax";
     public static final String TIP = "Tip";
+    
+    /**
+     * Selection for query to contacts for autocomplete
+     */
+    public static final String[] CONTACTS_PROJECTION = new String[] {
+        ContactsContract.Contacts._ID,
+        ContactsContract.Contacts.DISPLAY_NAME
+    };
+    
 }

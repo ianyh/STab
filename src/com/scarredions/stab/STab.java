@@ -1,9 +1,7 @@
 package com.scarredions.stab;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.LayoutInflater;
@@ -110,8 +108,8 @@ public class STab extends Activity implements OnClickListener
     }
     
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, STConstants.MENU_EDIT_TAX, 0, "Edit Tax");
-        menu.add(0, STConstants.MENU_EDIT_TIP, 0, "Edit Tip");
+        menu.add(0, STConstants.MENU_EDIT_TAX, 0, "Edit " + STConstants.TAX);
+        menu.add(0, STConstants.MENU_EDIT_TIP, 0, "Edit " + STConstants.TIP);
         return true;
     }
     
@@ -162,14 +160,11 @@ public class STab extends Activity implements OnClickListener
     }
     
     public Cursor getContacts() {
-        Uri uri = ContactsContract.Contacts.CONTENT_URI;
-        String[] projection = new String[] {
-                ContactsContract.Contacts._ID,
-                ContactsContract.Contacts.DISPLAY_NAME
-        };
-
-        ContentResolver content = getContentResolver();
-        return content.query(uri, projection, null, null, ContactsContract.Contacts.DISPLAY_NAME);
+        return managedQuery(ContactsContract.Contacts.CONTENT_URI, 
+                STConstants.CONTACTS_PROJECTION, 
+                null, 
+                null, 
+                ContactsContract.Contacts.DISPLAY_NAME);
     }
     
     public void onClick(View v)
