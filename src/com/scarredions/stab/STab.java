@@ -7,9 +7,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckedTextView;
@@ -26,6 +27,9 @@ import com.scarredions.stab.STPersonListAdapter;
 
 public class STab extends Activity implements OnClickListener
 {
+    private final int MENU_EDIT_TAX = 0;
+    private final int MENU_EDIT_TIP = 1;
+    
     private STMenuListAdapter menuListAdapter;
     private STPersonListAdapter personListAdapter;
     private STDataController dataController;
@@ -56,7 +60,6 @@ public class STab extends Activity implements OnClickListener
         View menuListTax = inflateMenuListTaxView();
         View menuListTip = inflateMenuListTipView();
         LinearLayout footerLayout = new LinearLayout(this);
-        footerLayout.setClickable(false);
         footerLayout.setOrientation(LinearLayout.VERTICAL);
         footerLayout.addView(menuListTax); 
         footerLayout.addView(menuListTip);       
@@ -92,9 +95,6 @@ public class STab extends Activity implements OnClickListener
             public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
                 STPersonListAdapter adapter = (STPersonListAdapter) parent.getAdapter();
                 adapter.getDataController().setCurrentPersonId(position);
-                adapter.getDataController().updateTax();
-                adapter.getDataController().updateTip();
-                adapter.getDataController().updateTotal();
                 adapter.getMenuListAdapter().notifyDataSetChanged();
             }
 
@@ -112,6 +112,25 @@ public class STab extends Activity implements OnClickListener
                 R.layout.autocomplete_list_item, cursor,
                 new String[] { ContactsContract.Data.DISPLAY_NAME }, new int[] { android.R.id.text1 });
         personListAdapter.setContactsAutocompleteAdapter(contactsAdapter);
+    }
+    
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, MENU_EDIT_TAX, 0, "Edit Tax");
+        menu.add(0, MENU_EDIT_TIP, 0, "Edit Tip");
+        return true;
+    }
+    
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+        case MENU_EDIT_TAX:
+            dataController.editTaxByDialog();
+            return true;
+        case MENU_EDIT_TIP:
+            dataController.editTipByDialog();
+            return true;
+        }
+
+        return false;
     }
     
     public Button fixAndGetAddPersonButton()
@@ -142,7 +161,8 @@ public class STab extends Activity implements OnClickListener
         LayoutInflater factory = LayoutInflater.from(this);
         LinearLayout tipView = (LinearLayout) factory.inflate(R.layout.list_total, null);
         String tipText = "Tip (" + dataController.getFormattedTipPercentage() + ")";
-        ((TextView) tipView.findViewById(R.id.list_footer_text)).setText(tipText);        
+        ((TextView) tipView.findViewById(R.id.list_footer_text)).setText(tipText);
+        
         return tipView;
     }
     

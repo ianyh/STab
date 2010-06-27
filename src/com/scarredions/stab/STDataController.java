@@ -7,11 +7,16 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class STDataController {
+public class STDataController implements OnClickListener {
     
     private final NumberFormat formatter = NumberFormat.getCurrencyInstance();
     // TODO: get this from location?
@@ -186,10 +191,16 @@ public class STDataController {
     
     public void setTaxPercentage(double newTax) {
         tax = newTax;
+        TextView taxView = (TextView) ((LinearLayout) getTaxView()).getChildAt(0);
+        taxView.setText("Tax (" + getFormattedTaxPercentage() + ")");
+        updateTax();
     }
     
     public void setTipPercentage(double newTip) {
         tip = newTip;
+        TextView tipView = (TextView) ((LinearLayout) getTipView()).getChildAt(0);
+        tipView.setText("Tip (" + getFormattedTipPercentage() + ")");
+        updateTip();
     }
     
     public void setSelection(int menuListPosition, boolean checked) {
@@ -201,19 +212,60 @@ public class STDataController {
         }
     }
 
+    public void updateFooter() {
+        updateTax();
+    }
+    
     public void updateTax() {
         TextView tax = (TextView) ((LinearLayout) getTaxView()).getChildAt(1);
         tax.setText(getFormattedPrice(getPersonTax()));
+        updateTip();
     }
     
     public void updateTip() {
         TextView tip = (TextView) ((LinearLayout) getTipView()).getChildAt(1);
         tip.setText(getFormattedPrice(getPersonTip()));
+        updateTotal();
     }
     
     public void updateTotal() {
         TextView total = (TextView) ((LinearLayout) getTotalView()).getChildAt(1);
         total.setText(getFormattedPrice(getPersonTotal() + getPersonTax() + getPersonTip()));
+    }
+    
+    public void editTaxByDialog() {
+        editByDialog("Tax", Double.valueOf(getTaxPercentage()));
+    }
+    
+    public void editTipByDialog() {
+        editByDialog("Tip", Double.valueOf(getTipPercentage()));
+    }
+
+    public void onClick(DialogInterface dialog, int whichButton) {
+        if (whichButton == DialogInterface.BUTTON_POSITIVE) {
+            AlertDialog d = (AlertDialog) dialog;
+            String type = ((TextView) d.findViewById(R.id.value_view)).getText().toString();            
+            String value = ((EditText) d.findViewById(R.id.value_edit)).getText().toString();
+            if (type.equals("Tax")) {
+                setTaxPercentage(Double.valueOf(value));
+            } else if (type.equals("Tip")) {
+                setTipPercentage(Double.valueOf(value));
+            }
+        }        
+    }
+    
+    private void editByDialog(String type, Double value) {
+        LayoutInflater factory = LayoutInflater.from(menuListFooter.getContext());
+        LinearLayout dialogLayout = (LinearLayout) factory.inflate(R.layout.dialog_tax_or_tip_entry, null);
+        ((TextView) dialogLayout.getChildAt(0)).setText(type);
+        ((EditText) dialogLayout.getChildAt(1)).setText(value.toString());
+        
+        new AlertDialog.Builder(menuListFooter.getContext())
+            .setView(dialogLayout)
+            .setPositiveButton("OK", this)
+            .setNegativeButton("Cancel", this)
+            .create().show();
+        
     }
     
     public class MenuItem {
@@ -233,4 +285,5 @@ public class STDataController {
             return price;
         }
     }
+
 }
