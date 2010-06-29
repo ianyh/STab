@@ -27,7 +27,8 @@ public class STDataController implements OnClickListener {
     private int currentPersonId;
     private int nextPersonId = 0;
     
-    private ArrayList<MenuItem> menuItems;
+    private ArrayList<String> menuItemNames;
+    private ArrayList<Double> menuItemPrices;
     
     private LinearLayout menuListFooter;
     
@@ -35,7 +36,9 @@ public class STDataController implements OnClickListener {
     
     public STDataController() {
         personToSelections = new HashMap<Integer, HashSet<Integer>>();
-        menuItems = new ArrayList<MenuItem>();
+        
+        menuItemNames = new ArrayList<String>();
+        menuItemPrices = new ArrayList<Double>();        
     }
     
     public HashSet<Integer> getPersonSelections(int personId) {
@@ -104,13 +107,10 @@ public class STDataController implements OnClickListener {
     
     public Double getTotal() {
         double total = 0;
-        
-        Iterator<MenuItem> menuItemsIter = menuItems.iterator();
-        MenuItem menuItem;
-        
-        while(menuItemsIter.hasNext()) {
-            menuItem = menuItemsIter.next();
-            total += menuItem.getPrice().doubleValue();
+        int menuItemPricesLen = menuItemPrices.size();
+
+        for(int i = 0; i < menuItemPricesLen; i++) {
+            total += menuItemPrices.get(i).doubleValue();
         }
         
         return Double.valueOf(total);
@@ -136,17 +136,13 @@ public class STDataController implements OnClickListener {
         }
         return total;
     }
-    
-    public MenuItem getMenuItem(int position) {
-        return menuItems.get(position);
-    }
-    
+        
     public String getMenuItemName(int position) {
-        return menuItems.get(position).getName();
+        return menuItemNames.get(position);
     }
     
     public Double getMenuItemPrice(int position) {
-        return menuItems.get(position).getPrice();
+        return menuItemPrices.get(position);
     }
     
     public String getFormattedPrice(Double price) {
@@ -154,7 +150,7 @@ public class STDataController implements OnClickListener {
     }
     
     public int getMenuItemCount() {
-        return menuItems.size();
+        return menuItemNames.size();
     }
     
     public View getMenuListFooter() {
@@ -180,7 +176,9 @@ public class STDataController implements OnClickListener {
     }
     
     public void addMenuItem(String name, Double price) {
-        menuItems.add(new MenuItem(name, price));
+        menuItemNames.add(name);
+        menuItemPrices.add(price);
+//        menuItems.add(new MenuItem(name, price));
     }
 
     public void setMenuListFooter(LinearLayout footerView) {
@@ -277,23 +275,4 @@ public class STDataController implements OnClickListener {
             .create().show();
         
     }
-    
-    public class MenuItem {
-        private String name;
-        private Double price;
-        
-        public MenuItem(String name, Double price) {
-            this.name = name;
-            this.price = price;
-        }
-        
-        public String getName() {
-            return name;
-        }
-        
-        public Double getPrice() {
-            return price;
-        }
-    }
-
 }
