@@ -16,30 +16,33 @@ import android.widget.TextView;
 
 public class STMenuListAdapter extends BaseAdapter implements DialogInterface.OnClickListener {
     
-    private final NumberFormat formatter = NumberFormat.getCurrencyInstance();
-
-    private Context mContext;
+    private Context context;
     private STDataController dataController;
-    public STMenuListAdapter(Context mContext, STDataController dataController) {
-        this.mContext = mContext;
+    
+    public STMenuListAdapter(Context context, STDataController dataController) {
+        this.context = context;
         this.dataController = dataController;
     }
-    
-    public STDataController getDataController() {
-        return dataController;
+
+    public Context getContext() {
+        return context;
     }
     
     public int getCount() {
         return dataController.getMenuItemCount();
     }
     
-    public long getItemId(int position) {
-        return position;
+    public STDataController getDataController() {
+        return dataController;
     }
     
-    public Context getContext() {
-        return mContext;
+    public Object getItem(int position) {
+        return dataController.getMenuItemName(position);
     }
+        
+    public long getItemId(int position) {
+        return position;
+    }    
 
     public View getView(int position, View convertView, ViewGroup parent) {
         LinearLayout menuItemView;
@@ -47,7 +50,7 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
         CheckedTextView menuItemPrice;
         
         if (convertView == null) {
-            LayoutInflater factory = LayoutInflater.from(getContext());            
+            LayoutInflater factory = LayoutInflater.from(context);            
             menuItemView = (LinearLayout) factory.inflate(R.layout.list_item, null);
         } else {
             menuItemView = (LinearLayout) convertView;
@@ -63,13 +66,20 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
         return menuItemView;
     }
 
-    public Object getItem(int position) {
-        return dataController.getMenuItemName(position);
-    }
-    
     public void add(String itemName, Double itemPrice) {
         dataController.addMenuItem(itemName, itemPrice);
     }
+
+    public void addMenuItemByDialog() {
+        LayoutInflater factory = LayoutInflater.from(getContext());
+        final View textEntryView = factory.inflate(R.layout.dialog_menu_item_entry, null);
+        
+        new AlertDialog.Builder(getContext())
+            .setView(textEntryView)
+            .setPositiveButton("OK", this)
+            .setNegativeButton("Cancel", this)
+            .create().show();
+    }    
     
     public void notifyDataSetChanged() {
         dataController.updateFooter();
@@ -92,19 +102,8 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
         }
     }
     
-    public String getFormattedPrice(Double price) {
-        return formatter.format(price.doubleValue());
+    public static String getFormattedPrice(Double price) {
+        return NumberFormat.getCurrencyInstance().format(price.doubleValue());
     }
     
-    public void addMenuItemByDialog() {
-        LayoutInflater factory = LayoutInflater.from(getContext());
-        final View textEntryView = factory.inflate(R.layout.dialog_menu_item_entry, null);
-        
-        new AlertDialog.Builder(getContext())
-            .setView(textEntryView)
-            .setPositiveButton("OK", this)
-            .setNegativeButton("Cancel", this)
-            .create().show();        
-    }
-
 }
