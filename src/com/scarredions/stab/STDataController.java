@@ -10,6 +10,7 @@ import java.util.Set;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -23,6 +24,8 @@ public class STDataController implements OnClickListener {
     private double tax = 0.08;
     private double tip = 0.2;
     
+    private ArrayList<String> personNames;
+    private ArrayList<Bitmap> personPhotos;
     private HashMap<Integer, HashSet<Integer>> personToSelections;
     private int currentPersonId;
     private int nextPersonId = 0;
@@ -35,6 +38,8 @@ public class STDataController implements OnClickListener {
     private String contactId;
     
     public STDataController() {
+        personNames = new ArrayList<String>();
+        personPhotos = new ArrayList<Bitmap>();
         personToSelections = new HashMap<Integer, HashSet<Integer>>();
         
         menuItemNames = new ArrayList<String>();
@@ -169,10 +174,27 @@ public class STDataController implements OnClickListener {
         return menuListFooter.getChildAt(STConstants.MENU_LIST_FOOTER_TOTAL_POSITION);
     }
     
+    public int getPersonCount() {
+        return personNames.size();
+    }
+    
+    public String getPersonName(int position) {
+        return personNames.get(position);
+    }
+    
+    public Bitmap getPersonPhoto(int position) {
+        return personPhotos.get(position);        
+    }
+    
     public void addPerson(String name) {
+        personNames.add(name);
         personToSelections.put(Integer.valueOf(nextPersonId), new HashSet<Integer>());
         nextPersonId++;
         updateFooter();
+    }
+    
+    public void addPersonPhoto(Bitmap photo) {
+        personPhotos.add(photo);
     }
     
     public void addMenuItem(String name, Double price) {

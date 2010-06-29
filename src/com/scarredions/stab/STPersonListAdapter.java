@@ -1,7 +1,6 @@
 package com.scarredions.stab;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -32,16 +31,12 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
     private STDataController dataController;
     private SimpleCursorAdapter contactsAutoCompleteAdapter;
     
-    private ArrayList<Bitmap> contactPhotos;
-    private ArrayList<String> contactNames;
     private ContentResolver content;
     
     public STPersonListAdapter(Context c, STDataController dataController) {
         mContext = c;
         content = c.getContentResolver();
         this.dataController = dataController;
-        contactPhotos = new ArrayList<Bitmap>();
-        contactNames = new ArrayList<String>();
     }
 
     public Context getContext() {
@@ -63,10 +58,10 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
             ImageView contactPhotoView = (ImageView) layout.findViewById(R.id.contact_image);
             TextView contactNameView = (TextView) layout.findViewById(R.id.contact_name);
             
-            Bitmap contactPhoto = contactPhotos.get(position);
+            Bitmap contactPhoto = dataController.getPersonPhoto(position);
             if (contactPhoto != null)
                 contactPhotoView.setImageBitmap(contactPhoto);
-            contactNameView.setText(contactNames.get(position));
+            contactNameView.setText(dataController.getPersonName(position));
             return layout;
         } else {
             return convertView;
@@ -82,12 +77,11 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
     }
 
     public void add(String name) {
-        contactNames.add(name);
         dataController.addPerson(name);
     }
     
     public void addPhoto(Bitmap photo) {
-        contactPhotos.add(photo);
+        dataController.addPersonPhoto(photo);
     }
 
     public void setContactsAutocompleteAdapter(SimpleCursorAdapter adapter) {
@@ -104,7 +98,7 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
             String name = ((AutoCompleteTextView) d.findViewById(R.id.name_edit)).getText().toString();
             add(name);
             String contactId = dataController.getSelectedContactId();
-            contactPhotos.add(getBitmapFromId(contactId));
+            dataController.addPersonPhoto(getBitmapFromId(contactId));
             this.notifyDataSetChanged();
         }
     }
@@ -132,11 +126,11 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
     }
 
     public int getCount() {
-        return contactNames.size();
+        return dataController.getPersonCount();
     }
 
     public Object getItem(int position) {
-        return contactNames.get(position);
+        return dataController.getPersonName(position);
     }
 
     public long getItemId(int position) {
