@@ -48,7 +48,7 @@ public class STab extends Activity implements OnClickListener
         
         // create adapters
         menuListAdapter = new STMenuListAdapter(this, dataController);
-        personListAdapter = new STPersonListAdapter(this, R.layout.contact, dataController);
+        personListAdapter = new STPersonListAdapter(this, dataController);
         personListAdapter.setMenuListAdapter(menuListAdapter);
 
         View menuListTotal = inflateMenuListTotalView();
@@ -56,8 +56,8 @@ public class STab extends Activity implements OnClickListener
         View menuListTip = inflateMenuListTipView();
         LinearLayout footerLayout = new LinearLayout(this);
         footerLayout.setOrientation(LinearLayout.VERTICAL);
-        footerLayout.addView(menuListTax); 
-        footerLayout.addView(menuListTip);       
+        footerLayout.addView(menuListTax);
+        footerLayout.addView(menuListTip);
         footerLayout.addView(menuListTotal);
                 
         // set up the menu list view
@@ -98,12 +98,16 @@ public class STab extends Activity implements OnClickListener
             }
         });
         personListAdapter.add("you");
+        personListAdapter.addPhoto(null);       
         personListAdapter.setPersonListView(personListView);
+        personListAdapter.notifyDataSetChanged();
         
         Cursor cursor = getContacts();
         STContactListAdapter contactsAdapter = new STContactListAdapter(this, 
                 R.layout.autocomplete_list_item, cursor,
-                new String[] { ContactsContract.Data.DISPLAY_NAME }, new int[] { android.R.id.text1 });
+                new String[] { ContactsContract.Data.DISPLAY_NAME }, 
+                new int[] { R.id.autocomplete_text },
+                dataController);
         personListAdapter.setContactsAutocompleteAdapter(contactsAdapter);
     }
     

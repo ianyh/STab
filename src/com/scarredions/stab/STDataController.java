@@ -31,6 +31,8 @@ public class STDataController implements OnClickListener {
     
     private LinearLayout menuListFooter;
     
+    private String contactId;
+    
     public STDataController() {
         personToSelections = new HashMap<Integer, HashSet<Integer>>();
         menuItems = new ArrayList<MenuItem>();
@@ -187,6 +189,14 @@ public class STDataController implements OnClickListener {
         
     public void setCurrentPersonId(int personId) {
         currentPersonId = personId;
+    }
+    
+    public void setSelectedContactId(String contactId) {
+        this.contactId = contactId;
+    }
+    
+    public String getSelectedContactId() {
+        return contactId;
     }
     
     public void setTaxPercentage(double newTax) {

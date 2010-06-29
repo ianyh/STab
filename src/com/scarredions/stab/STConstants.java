@@ -24,7 +24,7 @@ public class STConstants {
     public static final String TIP = "Tip";
     
     /**
-     * Selection for query to contacts for autocomplete
+     * Selection for query to contacts for auto-complete
      */
     public static final String[] CONTACTS_PROJECTION = new String[] {
         ContactsContract.Contacts._ID,

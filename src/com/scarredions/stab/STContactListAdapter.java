@@ -10,16 +10,21 @@ import android.widget.SimpleCursorAdapter;
 public class STContactListAdapter extends SimpleCursorAdapter implements Filterable {
 
     private ContentResolver mContent;
+    private STDataController dataController;
 
-    public STContactListAdapter(Context context, int layout, Cursor c, String[] from, int[] to) {
+    public STContactListAdapter(Context context, int layout, Cursor c, String[] from, int[] to, STDataController dataController) {        
         super(context, layout, c, from, to);
         mContent = context.getContentResolver();
+        this.dataController = dataController;
     }
-    
+        
     @Override
     public String convertToString(Cursor cursor) {
-        int index = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
-        return cursor.getString(index);
+        int idIndex = cursor.getColumnIndex(ContactsContract.Contacts._ID);
+        int nameIndex = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
+        
+        dataController.setSelectedContactId(cursor.getString(idIndex));
+        return cursor.getString(nameIndex);
     }
     
     @Override
@@ -39,7 +44,7 @@ public class STContactListAdapter extends SimpleCursorAdapter implements Filtera
         }
                 
         return mContent.query(ContactsContract.Contacts.CONTENT_URI, 
-                STConstants.CONTACTS_PROJECTION, 
+                STConstants.CONTACTS_PROJECTION,
                 buffer.toString(), 
                 args, 
                 null);
