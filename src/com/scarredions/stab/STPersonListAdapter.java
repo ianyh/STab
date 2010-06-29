@@ -35,6 +35,9 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
     }
     
     public Bitmap getBitmapFromId(String contactId) {
+        if (contactId == null)
+            return null;
+        
         InputStream contactPhotoStream = ContactsContract.Contacts.openContactPhotoInputStream(
                 context.getContentResolver(),
                 ContentUris.withAppendedId(
@@ -113,7 +116,7 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
         if (whichButton == DialogInterface.BUTTON_POSITIVE) {
             AlertDialog d = (AlertDialog) dialog;
             String name = ((AutoCompleteTextView) d.findViewById(R.id.name_edit)).getText().toString();
-            String contactId = dataController.getSelectedContactId();
+            String contactId = dataController.getAndClearAutoCompletedContactId();
             add(name, getBitmapFromId(contactId));
             this.notifyDataSetChanged();
         }

@@ -82,7 +82,7 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
     }    
     
     public void notifyDataSetChanged() {
-        dataController.updateFooter();
+        dataController.updateMenuListFooter();
         super.notifyDataSetChanged();
     }
         

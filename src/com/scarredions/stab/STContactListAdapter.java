@@ -23,7 +23,7 @@ public class STContactListAdapter extends SimpleCursorAdapter implements Filtera
         int idIndex = cursor.getColumnIndex(ContactsContract.Contacts._ID);
         int nameIndex = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
         
-        dataController.setSelectedContactId(cursor.getString(idIndex));
+        dataController.setAutoCompletedContactId(cursor.getString(idIndex));
         return cursor.getString(nameIndex);
     }
     

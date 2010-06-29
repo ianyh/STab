@@ -75,7 +75,7 @@ public class STab extends Activity implements OnClickListener
                 menuItemPrice.toggle();
                 
                 mla.getDataController().setSelection(position, menuItemPrice.isChecked());
-                mla.getDataController().updateFooter();
+                mla.getDataController().updateMenuListFooter();
             }
         });
         

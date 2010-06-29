@@ -4,7 +4,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import android.app.AlertDialog;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 
 public class STDataController implements OnClickListener {
     
-    private final NumberFormat formatter = NumberFormat.getCurrencyInstance();
     // TODO: get this from location?
     private double tax = 0.08;
     private double tip = 0.2;
@@ -35,7 +33,7 @@ public class STDataController implements OnClickListener {
     
     private LinearLayout menuListFooter;
     
-    private String contactId;
+    private String autoCompletedContactId;
     
     public STDataController() {
         personNames = new ArrayList<String>();
@@ -46,43 +44,32 @@ public class STDataController implements OnClickListener {
         menuItemPrices = new ArrayList<Double>();        
     }
     
-    public HashSet<Integer> getPersonSelections(int personId) {
+    public boolean currentPersonHasSelected(int menuListPosition) {
+        Set<Integer> selections = getCurrentPersonsSelections();
+        return selections.contains(Integer.valueOf(menuListPosition));
+    }
+    
+    public HashSet<Integer> getPersonsSelections(int personId) {
         return personToSelections.get(Integer.valueOf(personId));
     }
     
-    public HashSet<Integer> getCurrentPersonSelections() {
-        return getPersonSelections(currentPersonId);
-    }
-    
-    public Iterator<HashSet<Integer>> getPersonSelectionsIter() {
-        return personToSelections.values().iterator();
+    public HashSet<Integer> getCurrentPersonsSelections() {
+        return getPersonsSelections(currentPersonId);
     }
     
     public int getCurrentPersonId() {
         return currentPersonId;
     }
     
-    public boolean currentPersonHasSelected(int menuListPosition) {
-        Set<Integer> selections = getCurrentPersonSelections();
-        return selections.contains(Integer.valueOf(menuListPosition));
-    }
-    
     public int getNumberOfPeopleWithSelection(int menuListPosition) {
         int counter = 0;
-        Iterator<HashSet<Integer>> selectionsIter = getPersonSelectionsIter();
-        HashSet<Integer> selections;
-        Integer integer;
-        
-        while(selectionsIter.hasNext()) {
-            selections = selectionsIter.next(); 
-            Iterator<Integer> integerIter = selections.iterator();
-            while(integerIter.hasNext()) {
-                integer = integerIter.next();
-                if (integer.intValue() == menuListPosition)
+        for(HashSet<Integer> selections : personToSelections.values()) {
+            for(Integer integer : selections) {
+                if (integer.intValue() == menuListPosition) {
                     counter++;
+                }
             }
-        }
-        
+        }        
         return counter;
     }
     
@@ -94,12 +81,16 @@ public class STDataController implements OnClickListener {
         return tip;
     }
     
+    public static String getFormattedPercentage(double value) {
+        return NumberFormat.getPercentInstance().format(value);
+    }
+    
     public String getFormattedTaxPercentage() {
-        return NumberFormat.getPercentInstance().format(getTaxPercentage());
+        return getFormattedPercentage(getTaxPercentage());
     }
     
     public String getFormattedTipPercentage() {
-        return NumberFormat.getPercentInstance().format(getTipPercentage());
+        return getFormattedPercentage(getTipPercentage());
     }
     
     public Double getTax() {
@@ -131,13 +122,9 @@ public class STDataController implements OnClickListener {
     
     public Double getPersonTotal() {
         double total = 0;
-        Set<Integer> selections = getCurrentPersonSelections();
-        Iterator<Integer> selectionsIter = selections.iterator();
-        Integer integer;
-        while(selectionsIter.hasNext()) {
-            integer = selectionsIter.next();
-            total += getMenuItemPrice(integer.intValue()).doubleValue() /
-                getNumberOfPeopleWithSelection(integer.intValue());
+        for (Integer selection : getCurrentPersonsSelections()) {
+            total += getMenuItemPrice(selection.intValue()).doubleValue() /
+                getNumberOfPeopleWithSelection(selection.intValue());
         }
         return total;
     }
@@ -150,8 +137,8 @@ public class STDataController implements OnClickListener {
         return menuItemPrices.get(position);
     }
     
-    public String getFormattedPrice(Double price) {
-        return formatter.format(price.doubleValue());
+    public static String getFormattedPrice(Double price) {
+        return NumberFormat.getCurrencyInstance().format(price.doubleValue());
     }
     
     public int getMenuItemCount() {
@@ -191,17 +178,12 @@ public class STDataController implements OnClickListener {
         personPhotos.add(photo);
         personToSelections.put(Integer.valueOf(nextPersonId), new HashSet<Integer>());
         nextPersonId++;
-        updateFooter();
-    }
-    
-    public void addPersonPhoto(Bitmap photo) {
-        personPhotos.add(photo);
+        updateMenuListFooter();
     }
     
     public void addMenuItem(String name, Double price) {
         menuItemNames.add(name);
         menuItemPrices.add(price);
-//        menuItems.add(new MenuItem(name, price));
     }
 
     public void setMenuListFooter(LinearLayout footerView) {
@@ -212,12 +194,14 @@ public class STDataController implements OnClickListener {
         currentPersonId = personId;
     }
     
-    public void setSelectedContactId(String contactId) {
-        this.contactId = contactId;
+    public void setAutoCompletedContactId(String contactId) {
+        this.autoCompletedContactId = contactId;
     }
     
-    public String getSelectedContactId() {
-        return contactId;
+    public String getAndClearAutoCompletedContactId() {
+        String id = autoCompletedContactId;
+        autoCompletedContactId = null;
+        return id;
     }
     
     public void setTaxPercentage(double newTax) {
@@ -235,7 +219,7 @@ public class STDataController implements OnClickListener {
     }
     
     public void setSelection(int menuListPosition, boolean checked) {
-        HashSet<Integer> selections = getCurrentPersonSelections();
+        HashSet<Integer> selections = getCurrentPersonsSelections();
         if (checked) {
             selections.add(Integer.valueOf(menuListPosition));
         } else {
@@ -243,7 +227,7 @@ public class STDataController implements OnClickListener {
         }
     }
 
-    public void updateFooter() {
+    public void updateMenuListFooter() {
         updateTax();
     }
     
@@ -275,14 +259,14 @@ public class STDataController implements OnClickListener {
     public void onClick(DialogInterface dialog, int whichButton) {
         if (whichButton == DialogInterface.BUTTON_POSITIVE) {
             AlertDialog d = (AlertDialog) dialog;
-            String type = ((TextView) d.findViewById(R.id.value_view)).getText().toString();            
+            String type = ((TextView) d.findViewById(R.id.value_view)).getText().toString();
             String value = ((EditText) d.findViewById(R.id.value_edit)).getText().toString();
             if (type.equals("Tax")) {
                 setTaxPercentage(Double.valueOf(value));
             } else if (type.equals("Tip")) {
                 setTipPercentage(Double.valueOf(value));
             }
-        }        
+        }
     }
     
     private void editByDialog(String type, Double value) {
@@ -296,6 +280,5 @@ public class STDataController implements OnClickListener {
             .setPositiveButton("OK", this)
             .setNegativeButton("Cancel", this)
             .create().show();
-        
     }
 }
