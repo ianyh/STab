@@ -186,8 +186,9 @@ public class STDataController implements OnClickListener {
         return personPhotos.get(position);        
     }
     
-    public void addPerson(String name) {
+    public void addPerson(String name, Bitmap photo) {
         personNames.add(name);
+        personPhotos.add(photo);
         personToSelections.put(Integer.valueOf(nextPersonId), new HashSet<Integer>());
         nextPersonId++;
         updateFooter();

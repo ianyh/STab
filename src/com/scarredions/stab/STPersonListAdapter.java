@@ -3,7 +3,6 @@ package com.scarredions.stab;
 import java.io.InputStream;
 
 import android.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,37 +22,58 @@ import android.widget.TextView;
 
 public class STPersonListAdapter extends BaseAdapter implements DialogInterface.OnClickListener {
 
-    private Context mContext;
-    
+    private Context context;
     private STMenuListAdapter menuListAdapter;
     private Gallery personListView;
     
     private STDataController dataController;
     private SimpleCursorAdapter contactsAutoCompleteAdapter;
     
-    private ContentResolver content;
-    
-    public STPersonListAdapter(Context c, STDataController dataController) {
-        mContext = c;
-        content = c.getContentResolver();
+    public STPersonListAdapter(Context context, STDataController dataController) {
+        this.context = context;
         this.dataController = dataController;
     }
-
-    public Context getContext() {
-        return mContext;
+    
+    public Bitmap getBitmapFromId(String contactId) {
+        InputStream contactPhotoStream = ContactsContract.Contacts.openContactPhotoInputStream(
+                context.getContentResolver(),
+                ContentUris.withAppendedId(
+                        ContactsContract.Contacts.CONTENT_URI,
+                        Double.valueOf(contactId).longValue()));
+        return BitmapFactory.decodeStream(contactPhotoStream);
     }
     
-    public STMenuListAdapter getMenuListAdapter() {
-        return menuListAdapter;
+    public Context getContext() {
+        return context;
+    }
+
+    public int getCount() {
+        return dataController.getPersonCount();
+    }
+    
+    public int getCurrentPersonId() {
+        return (int) personListView.getSelectedItemId();
     }
     
     public STDataController getDataController() {
         return dataController;
     }
+    
+    public Object getItem(int position) {
+        return dataController.getPersonName(position);
+    }
+
+    public long getItemId(int position) {
+        return position;
+    }
+    
+    public STMenuListAdapter getMenuListAdapter() {
+        return menuListAdapter;
+    }
 
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            LayoutInflater factory = LayoutInflater.from(getContext());
+            LayoutInflater factory = LayoutInflater.from(context);
             LinearLayout layout = (LinearLayout) factory.inflate(R.layout.contact, null);
             ImageView contactPhotoView = (ImageView) layout.findViewById(R.id.contact_image);
             TextView contactNameView = (TextView) layout.findViewById(R.id.contact_name);
@@ -67,6 +87,41 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
             return convertView;
         }
     }
+
+    public void add(String name) {
+        add(name, null);
+    }
+    
+    public void add(String name, Bitmap photo) {
+        dataController.addPerson(name, photo);
+    }  
+    
+    public void addPersonByDialog() {
+        LayoutInflater factory = LayoutInflater.from(context);
+        LinearLayout dialogLayout = (LinearLayout) factory.inflate(R.layout.dialog_person_entry, null);
+        AutoCompleteTextView textEntryView = (AutoCompleteTextView) dialogLayout.findViewById(R.id.name_edit);
+        textEntryView.setAdapter(contactsAutoCompleteAdapter);
+        
+        new AlertDialog.Builder(context)
+            .setView(dialogLayout)
+            .setPositiveButton("OK", this)
+            .setNegativeButton("Cancel", this)
+            .create().show();
+    }    
+        
+    public void onClick(DialogInterface dialog, int whichButton) {
+        if (whichButton == DialogInterface.BUTTON_POSITIVE) {
+            AlertDialog d = (AlertDialog) dialog;
+            String name = ((AutoCompleteTextView) d.findViewById(R.id.name_edit)).getText().toString();
+            String contactId = dataController.getSelectedContactId();
+            add(name, getBitmapFromId(contactId));
+            this.notifyDataSetChanged();
+        }
+    }
+
+    public void setContactsAutoCompleteAdapter(SimpleCursorAdapter adapter) {
+        contactsAutoCompleteAdapter = adapter;
+    }
     
     public void setMenuListAdapter(STMenuListAdapter mla) {
         this.menuListAdapter = mla;
@@ -75,66 +130,5 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
     public void setPersonListView(Gallery personListView) {
         this.personListView = personListView;
     }
-
-    public void add(String name) {
-        dataController.addPerson(name);
-    }
     
-    public void addPhoto(Bitmap photo) {
-        dataController.addPersonPhoto(photo);
-    }
-
-    public void setContactsAutocompleteAdapter(SimpleCursorAdapter adapter) {
-        contactsAutoCompleteAdapter = adapter;
-    }
-    
-    public int getCurrentPersonId() {
-        return (int) personListView.getSelectedItemId();
-    }
-        
-    public void onClick(DialogInterface dialog, int whichButton) {
-        if (whichButton == DialogInterface.BUTTON_POSITIVE) {
-            AlertDialog d = (AlertDialog) dialog;
-            String name = ((AutoCompleteTextView) d.findViewById(R.id.name_edit)).getText().toString();
-            add(name);
-            String contactId = dataController.getSelectedContactId();
-            dataController.addPersonPhoto(getBitmapFromId(contactId));
-            this.notifyDataSetChanged();
-        }
-    }
-    
-    public Bitmap getBitmapFromId(String contactId) {
-        InputStream contactPhotoStream = ContactsContract.Contacts.openContactPhotoInputStream(
-                content, 
-                ContentUris.withAppendedId(
-                        ContactsContract.Contacts.CONTENT_URI,
-                        Double.valueOf(contactId).longValue()));
-        return BitmapFactory.decodeStream(contactPhotoStream);
-    }
-    
-    public void addPersonByDialog() {
-        LayoutInflater factory = LayoutInflater.from(this.getContext());
-        LinearLayout dialogLayout = (LinearLayout) factory.inflate(R.layout.dialog_person_entry, null);
-        AutoCompleteTextView textEntryView = (AutoCompleteTextView) dialogLayout.findViewById(R.id.name_edit);
-        textEntryView.setAdapter(contactsAutoCompleteAdapter);
-        
-        new AlertDialog.Builder(this.getContext())
-            .setView(dialogLayout)
-            .setPositiveButton("OK", this)
-            .setNegativeButton("Cancel", this)
-            .create().show();
-    }
-
-    public int getCount() {
-        return dataController.getPersonCount();
-    }
-
-    public Object getItem(int position) {
-        return dataController.getPersonName(position);
-    }
-
-    public long getItemId(int position) {
-        return position;
-    }
-
 }

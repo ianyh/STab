@@ -98,7 +98,6 @@ public class STab extends Activity implements OnClickListener
             }
         });
         personListAdapter.add("you");
-        personListAdapter.addPhoto(null);       
         personListAdapter.setPersonListView(personListView);
         personListAdapter.notifyDataSetChanged();
         
@@ -108,7 +107,7 @@ public class STab extends Activity implements OnClickListener
                 new String[] { ContactsContract.Data.DISPLAY_NAME }, 
                 new int[] { R.id.autocomplete_text },
                 dataController);
-        personListAdapter.setContactsAutocompleteAdapter(contactsAdapter);
+        personListAdapter.setContactsAutoCompleteAdapter(contactsAdapter);
     }
     
     public boolean onCreateOptionsMenu(Menu menu) {
