@@ -17,7 +17,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@id/add_person_button"
-        android:gravity="center" />
+        android:gravity="center"
+        android:spacing="10dip" />
     <View
         android:id="@+id/divider"
         android:background="@drawable/gradient"
