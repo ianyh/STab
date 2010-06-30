@@ -1,14 +1,9 @@
 package com.scarredions.stab;
 
-import java.io.InputStream;
-
 import android.app.AlertDialog;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +17,7 @@ import android.widget.TextView;
 
 public class STPersonListAdapter extends BaseAdapter implements DialogInterface.OnClickListener {
 
+    private final STContactAccessor contactsAccessor = STContactAccessor.getInstance();
     private Context context;
     private STMenuListAdapter menuListAdapter;
     private Gallery personListView;
@@ -38,12 +34,7 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
         if (contactId == null)
             return null;
         
-        InputStream contactPhotoStream = ContactsContract.Contacts.openContactPhotoInputStream(
-                context.getContentResolver(),
-                ContentUris.withAppendedId(
-                        ContactsContract.Contacts.CONTENT_URI,
-                        Double.valueOf(contactId).longValue()));
-        return BitmapFactory.decodeStream(contactPhotoStream);
+        return contactsAccessor.loadContactPhotoFromId(context, contactId);
     }
     
     public Context getContext() {

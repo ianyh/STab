@@ -1,7 +1,5 @@
 package com.scarredions.stab;
 
-import android.provider.ContactsContract;
-
 public class STConstants {
     /**
      * Constants for switching on menu selection
@@ -21,14 +19,6 @@ public class STConstants {
      * Also used for switching on tax/tip entry dialog
      */
     public static final String TAX = "Tax";
-    public static final String TIP = "Tip";
-    
-    /**
-     * Selection for query to contacts for auto-complete
-     */
-    public static final String[] CONTACTS_PROJECTION = new String[] {
-        ContactsContract.Contacts._ID,
-        ContactsContract.Contacts.DISPLAY_NAME
-    };
+    public static final String TIP = "Tip";    
     
 }

@@ -3,7 +3,6 @@ package com.scarredions.stab;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +24,8 @@ import com.scarredions.stab.STPersonListAdapter;
 
 public class STab extends Activity implements OnClickListener
 {
+    private final STContactAccessor contactsAccessor = STContactAccessor.getInstance();
+    
     private STMenuListAdapter menuListAdapter;
     private STPersonListAdapter personListAdapter;
     private STDataController dataController;
@@ -104,7 +105,7 @@ public class STab extends Activity implements OnClickListener
         Cursor cursor = getContacts();
         STContactListAdapter contactsAdapter = new STContactListAdapter(this, 
                 R.layout.autocomplete_list_item, cursor,
-                new String[] { ContactsContract.Data.DISPLAY_NAME }, 
+                new String[] { contactsAccessor.getDisplayNameColumnName() },
                 new int[] { R.id.autocomplete_text },
                 dataController);
         personListAdapter.setContactsAutoCompleteAdapter(contactsAdapter);
@@ -163,11 +164,7 @@ public class STab extends Activity implements OnClickListener
     }
     
     public Cursor getContacts() {
-        return managedQuery(ContactsContract.Contacts.CONTENT_URI, 
-                STConstants.CONTACTS_PROJECTION, 
-                null, 
-                null, 
-                ContactsContract.Contacts.DISPLAY_NAME);
+        return contactsAccessor.managedQuery(this);
     }
     
     public void onClick(View v)
