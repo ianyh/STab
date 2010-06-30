@@ -213,7 +213,7 @@ public class STDataController implements OnClickListener {
     
     public void setTipPercentage(double newTip) {
         tip = newTip;
-        TextView tipView = (TextView) ((LinearLayout) getTipView()).getChildAt(R.id.list_footer_text);
+        TextView tipView = (TextView) ((LinearLayout) getTipView()).findViewById(R.id.list_footer_text);
         tipView.setText(STConstants.TIP + " (" + getFormattedTipPercentage() + ")");
         updateTip();
     }
