@@ -19,23 +19,12 @@ public abstract class STContactAccessor {
     
     public static STContactAccessor getInstance() {
         if (sInstance == null) {
-            String className;
             int sdkVersion = Integer.parseInt(Build.VERSION.SDK);
             if (sdkVersion < Build.VERSION_CODES.ECLAIR) {
                 sInstance = new STContactAccessorOld();
-//                className = "STContactAccessorOld";
             } else {
                 sInstance = new STContactAccessorNew();
-//                className = "STContactAccessorNew";
             }
-//            try {
-//                Class<? extends STContactAccessor> clazz =
-//                    Class.forName(STContactAccessor.class.getPackage() + "." + className)
-//                    .asSubclass(STContactAccessor.class);
-//                sInstance = clazz.newInstance();
-//            } catch (Exception e) {
-//                throw new IllegalStateException(e);
-//            }
         }
         return sInstance;
     }    
