@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 public class STPersonListAdapter extends BaseAdapter implements DialogInterface.OnClickListener {
 
-    private final STContactAccessor contactsAccessor = STContactAccessor.getInstance();
     private Context context;
     private STMenuListAdapter menuListAdapter;
     private Gallery personListView;
@@ -29,14 +28,7 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
         this.context = context;
         this.dataController = dataController;
     }
-    
-    public Bitmap getBitmapFromId(String contactId) {
-        if (contactId == null)
-            return null;
         
-        return contactsAccessor.loadContactPhotoFromId(context, contactId);
-    }
-    
     public Context getContext() {
         return context;
     }
@@ -83,13 +75,13 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
     }
 
     public void add(String name) {
-        add(name, null);
+        add(name, STConstants.PERSON_NULL_ID);
     }
     
-    public void add(String name, Bitmap photo) {
-        dataController.addPerson(name, photo);
-    }  
-    
+    public void add(String name, String id) {
+        dataController.addPerson(name, id);
+    }
+        
     public void addPersonByDialog() {
         LayoutInflater factory = LayoutInflater.from(context);
         LinearLayout dialogLayout = (LinearLayout) factory.inflate(R.layout.dialog_person_entry, null);
@@ -108,7 +100,7 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
             AlertDialog d = (AlertDialog) dialog;
             String name = ((AutoCompleteTextView) d.findViewById(R.id.name_edit)).getText().toString();
             String contactId = dataController.getAndClearAutoCompletedContactId();
-            add(name, getBitmapFromId(contactId));
+            add(name, contactId);
             this.notifyDataSetChanged();
         }
     }

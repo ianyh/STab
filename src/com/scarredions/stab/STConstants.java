@@ -19,6 +19,11 @@ public class STConstants {
      * Also used for switching on tax/tip entry dialog
      */
     public static final String TAX = "Tax";
-    public static final String TIP = "Tip";    
+    public static final String TIP = "Tip";
+    
+    /**
+     * Id referring to a user who is not a Contact
+     */
+    public static final String PERSON_NULL_ID = "-1";
     
 }

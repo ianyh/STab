@@ -18,15 +18,18 @@ import android.widget.TextView;
 
 public class STDataController implements OnClickListener {
     
+    private final STContactAccessor contactsAccessor = STContactAccessor.getInstance();
+    
     // TODO: get this from location?
     private double tax = 0.08;
     private double tip = 0.2;
     
     private ArrayList<String> personNames;
+    private ArrayList<String> personIds;
     private ArrayList<Bitmap> personPhotos;
     private HashMap<Integer, HashSet<Integer>> personToSelections;
     private int currentPersonId;
-    private int nextPersonId = 0;
+    private int nextPersonIndex = 0;
     
     private ArrayList<String> menuItemNames;
     private ArrayList<Double> menuItemPrices;
@@ -37,6 +40,7 @@ public class STDataController implements OnClickListener {
     
     public STDataController() {
         personNames = new ArrayList<String>();
+        personIds = new ArrayList<String>();
         personPhotos = new ArrayList<Bitmap>();
         personToSelections = new HashMap<Integer, HashSet<Integer>>();
         
@@ -48,6 +52,13 @@ public class STDataController implements OnClickListener {
         Set<Integer> selections = getCurrentPersonsSelections();
         return selections.contains(Integer.valueOf(menuListPosition));
     }
+    
+    public Bitmap getBitmapFromId(String contactId) {
+        if (contactId == STConstants.PERSON_NULL_ID)
+            return null;
+        
+        return contactsAccessor.loadContactPhotoFromId(menuListFooter.getContext(), contactId);
+    }    
     
     public HashSet<Integer> getPersonsSelections(int personId) {
         return personToSelections.get(Integer.valueOf(personId));
@@ -173,11 +184,20 @@ public class STDataController implements OnClickListener {
         return personPhotos.get(position);        
     }
     
+    public void addPerson(String name, String id) {
+        personNames.add(name);
+        personIds.add(id);
+        personPhotos.add(getBitmapFromId(id));
+        personToSelections.put(Integer.valueOf(nextPersonIndex), new HashSet<Integer>());
+        nextPersonIndex++;
+        updateMenuListFooter();    
+    }
+    
     public void addPerson(String name, Bitmap photo) {
         personNames.add(name);
         personPhotos.add(photo);
-        personToSelections.put(Integer.valueOf(nextPersonId), new HashSet<Integer>());
-        nextPersonId++;
+        personToSelections.put(Integer.valueOf(nextPersonIndex), new HashSet<Integer>());
+        nextPersonIndex++;
         updateMenuListFooter();
     }
     
