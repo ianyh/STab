@@ -54,7 +54,7 @@ public class STDataController implements OnClickListener {
     }
     
     public Bitmap getBitmapFromId(String contactId) {
-        if (contactId == STConstants.PERSON_NULL_ID)
+        if (contactId.equals(STConstants.PERSON_NULL_ID))
             return null;
         
         return contactsAccessor.loadContactPhotoFromId(menuListFooter.getContext(), contactId);
