@@ -12,7 +12,7 @@ public class STContactListAdapter extends SimpleCursorAdapter implements Filtera
     private ContentResolver mContent;
     private STDataController dataController;
 
-    public STContactListAdapter(Context context, int layout, Cursor c, String[] from, int[] to, STDataController dataController) {        
+    public STContactListAdapter(Context context, int layout, Cursor c, String[] from, int[] to, STDataController dataController) {
         super(context, layout, c, from, to);
         mContent = context.getContentResolver();
         this.dataController = dataController;

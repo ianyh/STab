@@ -65,8 +65,9 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
             TextView contactNameView = (TextView) layout.findViewById(R.id.contact_name);
             
             Bitmap contactPhoto = dataController.getPersonPhoto(position);
-            if (contactPhoto != null)
+            if (contactPhoto != null) {
                 contactPhotoView.setImageBitmap(contactPhoto);
+            }
             contactNameView.setText(dataController.getPersonName(position));
             return layout;
         } else {
@@ -93,7 +94,7 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
             .setPositiveButton("OK", this)
             .setNegativeButton("Cancel", this)
             .create().show();
-    }    
+    }
         
     public void onClick(DialogInterface dialog, int whichButton) {
         if (whichButton == DialogInterface.BUTTON_POSITIVE) {

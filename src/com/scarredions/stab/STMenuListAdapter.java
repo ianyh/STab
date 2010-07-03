@@ -42,7 +42,7 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
         
     public long getItemId(int position) {
         return position;
-    }    
+    }
 
     public View getView(int position, View convertView, ViewGroup parent) {
         LinearLayout menuItemView;
@@ -50,7 +50,7 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
         CheckedTextView menuItemPrice;
         
         if (convertView == null) {
-            LayoutInflater factory = LayoutInflater.from(context);            
+            LayoutInflater factory = LayoutInflater.from(context);
             menuItemView = (LinearLayout) factory.inflate(R.layout.list_item, null);
         } else {
             menuItemView = (LinearLayout) convertView;
@@ -79,8 +79,9 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
             .setPositiveButton("OK", this)
             .setNegativeButton("Cancel", this)
             .create().show();
-    }    
+    }
     
+    @Override
     public void notifyDataSetChanged() {
         dataController.updateMenuListFooter();
         super.notifyDataSetChanged();

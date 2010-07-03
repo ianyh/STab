@@ -45,7 +45,7 @@ public class STDataController implements OnClickListener {
         personSelections = new ArrayList<HashSet<Integer>>();
         
         menuItemNames = new ArrayList<String>();
-        menuItemPrices = new ArrayList<Double>();        
+        menuItemPrices = new ArrayList<Double>();
     }
     
     public STDataController(Context context, Bundle savedInstanceState) {
@@ -90,11 +90,12 @@ public class STDataController implements OnClickListener {
     }
     
     public Bitmap getBitmapFromId(Context context, String contactId) {
-        if (contactId.equals(STConstants.PERSON_NULL_ID))
+        if (contactId.equals(STConstants.PERSON_NULL_ID)) {
             return null;
+        }
         
         return contactsAccessor.loadContactPhotoFromId(context, contactId);
-    }    
+    }
     
     public HashSet<Integer> getCurrentPersonsSelections() {
         return personSelections.get(currentPersonId);
@@ -108,7 +109,7 @@ public class STDataController implements OnClickListener {
                     counter++;
                 }
             }
-        }        
+        }
         return counter;
     }
     
@@ -201,7 +202,7 @@ public class STDataController implements OnClickListener {
     }
     
     public Bitmap getPersonPhoto(int position) {
-        return personPhotos.get(position);        
+        return personPhotos.get(position);
     }
     
     public void addPerson(String name, String id) {
@@ -209,7 +210,7 @@ public class STDataController implements OnClickListener {
         personIds.add(id);
         personPhotos.add(getBitmapFromId(menuListFooter.getContext(), id));
         personSelections.add(new HashSet<Integer>());
-        updateMenuListFooter();    
+        updateMenuListFooter();
     }
     
     public void addMenuItem(String name, Double price) {
@@ -330,12 +331,12 @@ public class STDataController implements OnClickListener {
                 selectionsString = selectionsString.substring(0, selectionsString.length() - 1);
             }
             
-            selectionsStrings.add(selectionsString);            
+            selectionsStrings.add(selectionsString);
         }
         bundle.putStringArrayList("personSelections", selectionsStrings);
         
         /**
-         * Save menu list data 
+         * Save menu list data
          */
         bundle.putStringArrayList("menuItemNames", menuItemNames);
         bundle.putDoubleArray("menuItemPrices", getMenuItemPrices());

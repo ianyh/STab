@@ -9,6 +9,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 
 public class STContactAccessorNew extends STContactAccessor {
@@ -17,17 +18,17 @@ public class STContactAccessorNew extends STContactAccessor {
      * Selection for query to contacts for auto-complete
      */
     public static final String[] CONTACTS_PROJECTION = new String[] {
-        ContactsContract.Contacts._ID,
+        BaseColumns._ID,
         ContactsContract.Contacts.DISPLAY_NAME
     };
 
     @Override
     public Cursor managedQuery(Activity activity) {
-        return activity.managedQuery(ContactsContract.Contacts.CONTENT_URI, 
-                CONTACTS_PROJECTION, 
-                null, 
-                null, 
-                ContactsContract.Contacts.DISPLAY_NAME);        
+        return activity.managedQuery(ContactsContract.Contacts.CONTENT_URI,
+                CONTACTS_PROJECTION,
+                null,
+                null,
+                ContactsContract.Contacts.DISPLAY_NAME);
     }
 
     @Override
@@ -42,7 +43,7 @@ public class STContactAccessorNew extends STContactAccessor {
 
     @Override
     public int getIdColumnIndex(Cursor cursor) {
-        return cursor.getColumnIndex(ContactsContract.Contacts._ID);
+        return cursor.getColumnIndex(BaseColumns._ID);
     }
 
     @Override
@@ -57,8 +58,8 @@ public class STContactAccessorNew extends STContactAccessor {
 
     @Override
     public Cursor query(ContentResolver content, String constraint, String[] args) {
-        return content.query(ContactsContract.Contacts.CONTENT_URI, 
-                CONTACTS_PROJECTION, 
+        return content.query(ContactsContract.Contacts.CONTENT_URI,
+                CONTACTS_PROJECTION,
                 constraint,
                 args,
                 ContactsContract.Contacts.DISPLAY_NAME);

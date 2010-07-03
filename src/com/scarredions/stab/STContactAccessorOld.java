@@ -9,7 +9,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.provider.BaseColumns;
 import android.provider.Contacts;
+import android.provider.Contacts.PeopleColumns;
 
 @SuppressWarnings("deprecation")
 public class STContactAccessorOld extends STContactAccessor {
@@ -18,9 +20,9 @@ public class STContactAccessorOld extends STContactAccessor {
      * Selection for query to contacts for auto-complete
      */
     public static final String[] CONTACTS_PROJECTION = new String[] {
-        Contacts.People._ID,
-        Contacts.People.DISPLAY_NAME
-    };        
+        BaseColumns._ID,
+        PeopleColumns.DISPLAY_NAME
+    };
     
     @Override
     public Cursor managedQuery(Activity activity) {
@@ -29,7 +31,7 @@ public class STContactAccessorOld extends STContactAccessor {
                 CONTACTS_PROJECTION,
                 null,
                 null,
-                Contacts.People.DISPLAY_NAME);
+                PeopleColumns.DISPLAY_NAME);
     }
 
     @Override
@@ -44,27 +46,27 @@ public class STContactAccessorOld extends STContactAccessor {
 
     @Override
     public int getIdColumnIndex(Cursor cursor) {
-        return cursor.getColumnIndex(Contacts.People._ID);
+        return cursor.getColumnIndex(BaseColumns._ID);
     }
 
     @Override
     public int getNameColumnIndex(Cursor cursor) {
-        return cursor.getColumnIndex(Contacts.People.DISPLAY_NAME);
+        return cursor.getColumnIndex(PeopleColumns.DISPLAY_NAME);
     }
 
     @Override
     public String getDisplayNameColumnName() {
-        return Contacts.People.DISPLAY_NAME;
+        return PeopleColumns.DISPLAY_NAME;
     }
 
     @Override
     public Cursor query(ContentResolver content, String constraint, String[] args) {
         return content.query(
-                Contacts.People.CONTENT_URI, 
+                Contacts.People.CONTENT_URI,
                 CONTACTS_PROJECTION,
-                constraint, 
-                args, 
-                Contacts.People.DISPLAY_NAME);        
+                constraint,
+                args,
+                PeopleColumns.DISPLAY_NAME);
     }
 
 }

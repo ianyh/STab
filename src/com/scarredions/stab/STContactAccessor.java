@@ -27,6 +27,6 @@ public abstract class STContactAccessor {
             }
         }
         return sInstance;
-    }    
+    }
     
 }

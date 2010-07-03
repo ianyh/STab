@@ -20,8 +20,6 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-import com.scarredions.stab.STPersonListAdapter;
-
 public class STab extends Activity implements OnClickListener
 {
     private final STContactAccessor contactsAccessor = STContactAccessor.getInstance();
@@ -33,9 +31,8 @@ public class STab extends Activity implements OnClickListener
     private Button addMenuItemButton;
     
     /** Called when the activity is first created. */
-    @Override 
-    public void onCreate(Bundle savedInstanceState)
-    {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
@@ -54,7 +51,7 @@ public class STab extends Activity implements OnClickListener
         addPersonButton.setOnClickListener(this);
         
         addMenuItemButton = (Button) findViewById(R.id.add_menu_item_button);
-        addMenuItemButton.setOnClickListener(this);  
+        addMenuItemButton.setOnClickListener(this);
         
         // create adapters
         menuListAdapter = new STMenuListAdapter(this, dataController);
@@ -77,8 +74,9 @@ public class STab extends Activity implements OnClickListener
         menuListView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 STMenuListAdapter mla = (STMenuListAdapter) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter();
-                if (mla.getDataController().getMenuListFooter() == v)
+                if (mla.getDataController().getMenuListFooter() == v) {
                     return;
+                }
                 
                 LinearLayout layout = (LinearLayout) v;
                 CheckedTextView menuItemPrice = (CheckedTextView) layout.findViewById(R.id.list_item_price);
@@ -110,20 +108,22 @@ public class STab extends Activity implements OnClickListener
         personListAdapter.setPersonListView(personListView);
         
         Cursor cursor = getContacts();
-        STContactListAdapter contactsAdapter = new STContactListAdapter(this, 
+        STContactListAdapter contactsAdapter = new STContactListAdapter(this,
                 R.layout.autocomplete_list_item, cursor,
                 new String[] { contactsAccessor.getDisplayNameColumnName() },
                 new int[] { R.id.autocomplete_text },
                 dataController);
-        personListAdapter.setContactsAutoCompleteAdapter(contactsAdapter);        
+        personListAdapter.setContactsAutoCompleteAdapter(contactsAdapter);
     }
     
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, STConstants.MENU_EDIT_TAX, 0, "Edit " + STConstants.TAX);
         menu.add(0, STConstants.MENU_EDIT_TIP, 0, "Edit " + STConstants.TIP);
         return true;
     }
     
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
         case STConstants.MENU_EDIT_TAX:
@@ -137,17 +137,15 @@ public class STab extends Activity implements OnClickListener
         return false;
     }
     
-    public Button fixAndGetAddPersonButton()
-    {
+    public Button fixAndGetAddPersonButton() {
         Button b = (Button) findViewById(R.id.add_person_button);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) b.getLayoutParams();
         params.addRule(RelativeLayout.ABOVE, R.id.divider);
-        b.setLayoutParams(params);        
+        b.setLayoutParams(params);
         return b;
     }
     
-    public View inflateMenuListTotalView()
-    {
+    public View inflateMenuListTotalView() {
         LayoutInflater factory = LayoutInflater.from(this);
         return factory.inflate(R.layout.list_total, null);
     }
@@ -174,13 +172,13 @@ public class STab extends Activity implements OnClickListener
         return contactsAccessor.managedQuery(this);
     }
     
-    public void onClick(View v)
-    {
+    public void onClick(View v) {
         Button b = (Button) v;
-        if (b == addPersonButton)
+        if (b == addPersonButton) {
             personListAdapter.addPersonByDialog();
-        else if (b == addMenuItemButton)
+        } else if (b == addMenuItemButton) {
             menuListAdapter.addMenuItemByDialog();
+        }
     }
     
 }
