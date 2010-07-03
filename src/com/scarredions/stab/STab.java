@@ -42,7 +42,7 @@ public class STab extends Activity implements OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        dataController = new STDataController(savedInstanceState);
+        dataController = new STDataController(this, savedInstanceState);
         
         updateLayout();
     }
@@ -60,15 +60,20 @@ public class STab extends Activity implements OnClickListener
             for (Integer s : selections) {
                 selectionsString += s.toString() + ",";
             }
-            selectionsStrings.add(selectionsString.substring(0, selectionsString.length() - 1));            
+            
+            if (!selectionsString.equals("")) {
+                selectionsString = selectionsString.substring(0, selectionsString.length() - 1);
+            }
+            
+            selectionsStrings.add(selectionsString);            
         }
         bundle.putStringArrayList("personSelections", selectionsStrings);
         
         /**
-         * Save menu list data
+         * Save menu list data 
          */
         bundle.putStringArrayList("menuItemNames", dataController.getMenuItemNames());
-        bundle.putDoubleArray("menuItemtPrices", dataController.getMenuItemPrices());
+        bundle.putDoubleArray("menuItemPrices", dataController.getMenuItemPrices());
         
         bundle.putDouble("tax", dataController.getTaxPercentage());
         bundle.putDouble("tip", dataController.getTipPercentage());

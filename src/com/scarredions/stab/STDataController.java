@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.graphics.Bitmap;
@@ -48,20 +49,22 @@ public class STDataController implements OnClickListener {
         menuItemPrices = new ArrayList<Double>();        
     }
     
-    public STDataController(Bundle savedInstanceState) {
+    public STDataController(Context context, Bundle savedInstanceState) {
         this();
         if (savedInstanceState != null) {
             personNames = savedInstanceState.getStringArrayList("personNames");
             personIds = savedInstanceState.getStringArrayList("personIds");
             for (String id : personIds) {
-                personPhotos.add(getBitmapFromId(id));
+                personPhotos.add(getBitmapFromId(context, id));
             }
             
             ArrayList<String> selectionsStrings = savedInstanceState.getStringArrayList("personSelections");
             for (String selectionsString : selectionsStrings) {
                 HashSet<Integer> selections = new HashSet<Integer>();
-                for (String selection : selectionsString.split(",")) {
-                    selections.add(Integer.getInteger(selection));
+                if (!selectionsString.equals("")) {
+                    for (String selection : selectionsString.split(",")) {
+                        selections.add(Integer.valueOf(selection));
+                    }
                 }
                 personSelections.add(selections);
             }
@@ -75,7 +78,10 @@ public class STDataController implements OnClickListener {
             tax = savedInstanceState.getDouble("tax");
             tip = savedInstanceState.getDouble("tip");
         } else {
-            this.addPerson("you", STConstants.PERSON_NULL_ID);
+            personNames.add("you");
+            personIds.add(STConstants.PERSON_NULL_ID);
+            personPhotos.add(null);
+            personSelections.add(new HashSet<Integer>());
         }
     }
     
@@ -84,11 +90,11 @@ public class STDataController implements OnClickListener {
         return selections.contains(Integer.valueOf(menuListPosition));
     }
     
-    public Bitmap getBitmapFromId(String contactId) {
+    public Bitmap getBitmapFromId(Context context, String contactId) {
         if (contactId.equals(STConstants.PERSON_NULL_ID))
             return null;
         
-        return contactsAccessor.loadContactPhotoFromId(menuListFooter.getContext(), contactId);
+        return contactsAccessor.loadContactPhotoFromId(context, contactId);
     }    
     
     public HashSet<Integer> getPersonsSelections(int personId) {
@@ -218,7 +224,7 @@ public class STDataController implements OnClickListener {
     public void addPerson(String name, String id) {
         personNames.add(name);
         personIds.add(id);
-        personPhotos.add(getBitmapFromId(id));
+        personPhotos.add(getBitmapFromId(menuListFooter.getContext(), id));
         personSelections.add(new HashSet<Integer>());
         nextPersonIndex++;
         updateMenuListFooter();    
