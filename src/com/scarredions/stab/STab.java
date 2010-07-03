@@ -1,5 +1,8 @@
 package com.scarredions.stab;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -39,13 +42,45 @@ public class STab extends Activity implements OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+        dataController = new STDataController();
+        
+        updateLayout(dataController);
+        
+        personListAdapter.add("you");
+        personListAdapter.notifyDataSetChanged();
+        
+    }
+    
+    @Override
+    public void onSaveInstanceState(Bundle bundle) {
+        /**
+         * Save person data
+         */
+        bundle.putStringArrayList("personNames", dataController.getPersonNames());
+        bundle.putStringArrayList("personIds", dataController.getPersonIds());
+        ArrayList<String> selectionsStrings = new ArrayList<String>();
+        for (HashSet<Integer> selections : dataController.getPersonSelections()) {
+            String selectionsString = "";
+            for (Integer s : selections) {
+                selectionsString += s.toString() + ",";
+            }
+            selectionsStrings.add(selectionsString.substring(0, selectionsString.length() - 1));            
+        }
+        bundle.putStringArrayList("personSelections", selectionsStrings);
+        
+        /**
+         * Save menu list data
+         */
+        bundle.putStringArrayList("menuItemNames", dataController.getMenuItemNames());
+        bundle.putDoubleArray("menuListPrices", dataController.getMenuListPrices());
+    }
+    
+    public void updateLayout(STDataController dataController) {
         addPersonButton = fixAndGetAddPersonButton();
         addPersonButton.setOnClickListener(this);
         
         addMenuItemButton = (Button) findViewById(R.id.add_menu_item_button);
-        addMenuItemButton.setOnClickListener(this);
-        
-        dataController = new STDataController();
+        addMenuItemButton.setOnClickListener(this);  
         
         // create adapters
         menuListAdapter = new STMenuListAdapter(this, dataController);
@@ -60,7 +95,7 @@ public class STab extends Activity implements OnClickListener
         footerLayout.addView(menuListTax);
         footerLayout.addView(menuListTip);
         footerLayout.addView(menuListTotal);
-                
+        
         // set up the menu list view
         ListView menuListView = (ListView) findViewById(R.id.menu_list_view);
         menuListView.addFooterView(footerLayout);
@@ -98,9 +133,7 @@ public class STab extends Activity implements OnClickListener
                 adapter.getMenuListAdapter().notifyDataSetChanged();
             }
         });
-        personListAdapter.add("you");
         personListAdapter.setPersonListView(personListView);
-        personListAdapter.notifyDataSetChanged();
         
         Cursor cursor = getContacts();
         STContactListAdapter contactsAdapter = new STContactListAdapter(this, 
@@ -108,7 +141,7 @@ public class STab extends Activity implements OnClickListener
                 new String[] { contactsAccessor.getDisplayNameColumnName() },
                 new int[] { R.id.autocomplete_text },
                 dataController);
-        personListAdapter.setContactsAutoCompleteAdapter(contactsAdapter);
+        personListAdapter.setContactsAutoCompleteAdapter(contactsAdapter);        
     }
     
     public boolean onCreateOptionsMenu(Menu menu) {

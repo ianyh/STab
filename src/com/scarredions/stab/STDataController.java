@@ -2,7 +2,6 @@ package com.scarredions.stab;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,7 +26,7 @@ public class STDataController implements OnClickListener {
     private ArrayList<String> personNames;
     private ArrayList<String> personIds;
     private ArrayList<Bitmap> personPhotos;
-    private HashMap<Integer, HashSet<Integer>> personToSelections;
+    private ArrayList<HashSet<Integer>> personSelections;
     private int currentPersonId;
     private int nextPersonIndex = 0;
     
@@ -42,7 +41,7 @@ public class STDataController implements OnClickListener {
         personNames = new ArrayList<String>();
         personIds = new ArrayList<String>();
         personPhotos = new ArrayList<Bitmap>();
-        personToSelections = new HashMap<Integer, HashSet<Integer>>();
+        personSelections = new ArrayList<HashSet<Integer>>();
         
         menuItemNames = new ArrayList<String>();
         menuItemPrices = new ArrayList<Double>();        
@@ -61,7 +60,7 @@ public class STDataController implements OnClickListener {
     }    
     
     public HashSet<Integer> getPersonsSelections(int personId) {
-        return personToSelections.get(Integer.valueOf(personId));
+        return personSelections.get(personId);
     }
     
     public HashSet<Integer> getCurrentPersonsSelections() {
@@ -74,7 +73,7 @@ public class STDataController implements OnClickListener {
     
     public int getNumberOfPeopleWithSelection(int menuListPosition) {
         int counter = 0;
-        for(HashSet<Integer> selections : personToSelections.values()) {
+        for(HashSet<Integer> selections : personSelections) {
             for(Integer integer : selections) {
                 if (integer.intValue() == menuListPosition) {
                     counter++;
@@ -124,11 +123,11 @@ public class STDataController implements OnClickListener {
     }
     
     public Double getPersonTax() {
-        return getTax() / personToSelections.size();
+        return getTax() / personSelections.size();
     }
     
     public Double getPersonTip() {
-        return getTip() / personToSelections.size();
+        return getTip() / personSelections.size();
     }
     
     public Double getPersonTotal() {
@@ -188,7 +187,7 @@ public class STDataController implements OnClickListener {
         personNames.add(name);
         personIds.add(id);
         personPhotos.add(getBitmapFromId(id));
-        personToSelections.put(Integer.valueOf(nextPersonIndex), new HashSet<Integer>());
+        personSelections.add(new HashSet<Integer>());
         nextPersonIndex++;
         updateMenuListFooter();    
     }
@@ -196,7 +195,7 @@ public class STDataController implements OnClickListener {
     public void addPerson(String name, Bitmap photo) {
         personNames.add(name);
         personPhotos.add(photo);
-        personToSelections.put(Integer.valueOf(nextPersonIndex), new HashSet<Integer>());
+        personSelections.add(new HashSet<Integer>());
         nextPersonIndex++;
         updateMenuListFooter();
     }
@@ -300,5 +299,29 @@ public class STDataController implements OnClickListener {
             .setPositiveButton("OK", this)
             .setNegativeButton("Cancel", this)
             .create().show();
+    }
+
+    public ArrayList<String> getPersonNames() {
+        return personNames;
+    }
+
+    public ArrayList<String> getPersonIds() {
+        return personIds;
+    }
+
+    public ArrayList<HashSet<Integer>> getPersonSelections() {
+        return personSelections;
+    }
+
+    public ArrayList<String> getMenuItemNames() {
+        return menuItemNames;
+    }
+
+    public double[] getMenuListPrices() {
+        double[] prices = new double[menuItemPrices.size()];
+        for (int i = 0; i < menuItemPrices.size(); i ++) {
+            prices[i] = menuItemPrices.get(i).doubleValue();
+        }
+        return prices;
     }
 }
