@@ -42,13 +42,9 @@ public class STab extends Activity implements OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        dataController = new STDataController();
+        dataController = new STDataController(savedInstanceState);
         
-        updateLayout(dataController);
-        
-        personListAdapter.add("you");
-        personListAdapter.notifyDataSetChanged();
-        
+        updateLayout();
     }
     
     @Override
@@ -72,10 +68,13 @@ public class STab extends Activity implements OnClickListener
          * Save menu list data
          */
         bundle.putStringArrayList("menuItemNames", dataController.getMenuItemNames());
-        bundle.putDoubleArray("menuListPrices", dataController.getMenuListPrices());
+        bundle.putDoubleArray("menuItemtPrices", dataController.getMenuItemPrices());
+        
+        bundle.putDouble("tax", dataController.getTaxPercentage());
+        bundle.putDouble("tip", dataController.getTipPercentage());
     }
     
-    public void updateLayout(STDataController dataController) {
+    public void updateLayout() {
         addPersonButton = fixAndGetAddPersonButton();
         addPersonButton.setOnClickListener(this);
         

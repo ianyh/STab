@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -45,6 +46,37 @@ public class STDataController implements OnClickListener {
         
         menuItemNames = new ArrayList<String>();
         menuItemPrices = new ArrayList<Double>();        
+    }
+    
+    public STDataController(Bundle savedInstanceState) {
+        this();
+        if (savedInstanceState != null) {
+            personNames = savedInstanceState.getStringArrayList("personNames");
+            personIds = savedInstanceState.getStringArrayList("personIds");
+            for (String id : personIds) {
+                personPhotos.add(getBitmapFromId(id));
+            }
+            
+            ArrayList<String> selectionsStrings = savedInstanceState.getStringArrayList("personSelections");
+            for (String selectionsString : selectionsStrings) {
+                HashSet<Integer> selections = new HashSet<Integer>();
+                for (String selection : selectionsString.split(",")) {
+                    selections.add(Integer.getInteger(selection));
+                }
+                personSelections.add(selections);
+            }
+            
+            menuItemNames = savedInstanceState.getStringArrayList("menuItemNames");
+            double[] prices = savedInstanceState.getDoubleArray("menuItemPrices");
+            for (double price : prices) {
+                menuItemPrices.add(Double.valueOf(price));
+            }
+            
+            tax = savedInstanceState.getDouble("tax");
+            tip = savedInstanceState.getDouble("tip");
+        } else {
+            this.addPerson("you", STConstants.PERSON_NULL_ID);
+        }
     }
     
     public boolean currentPersonHasSelected(int menuListPosition) {
@@ -317,7 +349,7 @@ public class STDataController implements OnClickListener {
         return menuItemNames;
     }
 
-    public double[] getMenuListPrices() {
+    public double[] getMenuItemPrices() {
         double[] prices = new double[menuItemPrices.size()];
         for (int i = 0; i < menuItemPrices.size(); i ++) {
             prices[i] = menuItemPrices.get(i).doubleValue();
