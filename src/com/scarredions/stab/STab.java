@@ -1,8 +1,5 @@
 package com.scarredions.stab;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -49,34 +46,7 @@ public class STab extends Activity implements OnClickListener
     
     @Override
     public void onSaveInstanceState(Bundle bundle) {
-        /**
-         * Save person data
-         */
-        bundle.putStringArrayList("personNames", dataController.getPersonNames());
-        bundle.putStringArrayList("personIds", dataController.getPersonIds());
-        ArrayList<String> selectionsStrings = new ArrayList<String>();
-        for (HashSet<Integer> selections : dataController.getPersonSelections()) {
-            String selectionsString = "";
-            for (Integer s : selections) {
-                selectionsString += s.toString() + ",";
-            }
-            
-            if (!selectionsString.equals("")) {
-                selectionsString = selectionsString.substring(0, selectionsString.length() - 1);
-            }
-            
-            selectionsStrings.add(selectionsString);            
-        }
-        bundle.putStringArrayList("personSelections", selectionsStrings);
-        
-        /**
-         * Save menu list data 
-         */
-        bundle.putStringArrayList("menuItemNames", dataController.getMenuItemNames());
-        bundle.putDoubleArray("menuItemPrices", dataController.getMenuItemPrices());
-        
-        bundle.putDouble("tax", dataController.getTaxPercentage());
-        bundle.putDouble("tip", dataController.getTipPercentage());
+        dataController.saveInstanceState(bundle);
     }
     
     public void updateLayout() {

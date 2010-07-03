@@ -339,6 +339,38 @@ public class STDataController implements OnClickListener {
             .create().show();
     }
 
+    public void saveInstanceState(Bundle bundle) {
+        /**
+         * Save person data
+         */
+        bundle.putStringArrayList("personNames", personNames);
+        bundle.putStringArrayList("personIds", personIds);
+        ArrayList<String> selectionsStrings = new ArrayList<String>();
+        for (HashSet<Integer> selections : personSelections) {
+            String selectionsString = "";
+            for (Integer s : selections) {
+                selectionsString += s.toString() + ",";
+            }
+            
+            if (!selectionsString.equals("")) {
+                selectionsString = selectionsString.substring(0, selectionsString.length() - 1);
+            }
+            
+            selectionsStrings.add(selectionsString);            
+        }
+        bundle.putStringArrayList("personSelections", selectionsStrings);
+        
+        /**
+         * Save menu list data 
+         */
+        bundle.putStringArrayList("menuItemNames", menuItemNames);
+        bundle.putDoubleArray("menuItemPrices", getMenuItemPrices());
+        
+        bundle.putDouble("tax", tax);
+        bundle.putDouble("tip", tip);
+        
+    }
+    
     public ArrayList<String> getPersonNames() {
         return personNames;
     }
