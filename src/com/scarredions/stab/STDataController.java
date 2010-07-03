@@ -30,7 +30,6 @@ public class STDataController implements OnClickListener {
     private ArrayList<Bitmap> personPhotos;
     private ArrayList<HashSet<Integer>> personSelections;
     private int currentPersonId;
-    private int nextPersonIndex = 0;
     
     private ArrayList<String> menuItemNames;
     private ArrayList<Double> menuItemPrices;
@@ -97,18 +96,10 @@ public class STDataController implements OnClickListener {
         return contactsAccessor.loadContactPhotoFromId(context, contactId);
     }    
     
-    public HashSet<Integer> getPersonsSelections(int personId) {
-        return personSelections.get(personId);
-    }
-    
     public HashSet<Integer> getCurrentPersonsSelections() {
-        return getPersonsSelections(currentPersonId);
+        return personSelections.get(currentPersonId);
     }
-    
-    public int getCurrentPersonId() {
-        return currentPersonId;
-    }
-    
+
     public int getNumberOfPeopleWithSelection(int menuListPosition) {
         int counter = 0;
         for(HashSet<Integer> selections : personSelections) {
@@ -121,24 +112,16 @@ public class STDataController implements OnClickListener {
         return counter;
     }
     
-    public double getTaxPercentage() {
-        return tax;
-    }
-    
-    public double getTipPercentage() {
-        return tip;
-    }
-    
-    public static String getFormattedPercentage(double value) {
+    private static String getFormattedPercentage(double value) {
         return NumberFormat.getPercentInstance().format(value);
     }
     
     public String getFormattedTaxPercentage() {
-        return getFormattedPercentage(getTaxPercentage());
+        return getFormattedPercentage(tax);
     }
     
     public String getFormattedTipPercentage() {
-        return getFormattedPercentage(getTipPercentage());
+        return getFormattedPercentage(tip);
     }
     
     public Double getTax() {
@@ -185,7 +168,7 @@ public class STDataController implements OnClickListener {
         return menuItemPrices.get(position);
     }
     
-    public static String getFormattedPrice(Double price) {
+    private static String getFormattedPrice(Double price) {
         return NumberFormat.getCurrencyInstance().format(price.doubleValue());
     }
     
@@ -226,16 +209,7 @@ public class STDataController implements OnClickListener {
         personIds.add(id);
         personPhotos.add(getBitmapFromId(menuListFooter.getContext(), id));
         personSelections.add(new HashSet<Integer>());
-        nextPersonIndex++;
         updateMenuListFooter();    
-    }
-    
-    public void addPerson(String name, Bitmap photo) {
-        personNames.add(name);
-        personPhotos.add(photo);
-        personSelections.add(new HashSet<Integer>());
-        nextPersonIndex++;
-        updateMenuListFooter();
     }
     
     public void addMenuItem(String name, Double price) {
@@ -306,11 +280,11 @@ public class STDataController implements OnClickListener {
     }
     
     public void editTaxByDialog() {
-        editByDialog(STConstants.TAX, Double.valueOf(getTaxPercentage()));
+        editByDialog(STConstants.TAX, Double.valueOf(tax));
     }
     
     public void editTipByDialog() {
-        editByDialog(STConstants.TIP, Double.valueOf(getTipPercentage()));
+        editByDialog(STConstants.TIP, Double.valueOf(tip));
     }
 
     public void onClick(DialogInterface dialog, int whichButton) {
@@ -370,24 +344,8 @@ public class STDataController implements OnClickListener {
         bundle.putDouble("tip", tip);
         
     }
-    
-    public ArrayList<String> getPersonNames() {
-        return personNames;
-    }
 
-    public ArrayList<String> getPersonIds() {
-        return personIds;
-    }
-
-    public ArrayList<HashSet<Integer>> getPersonSelections() {
-        return personSelections;
-    }
-
-    public ArrayList<String> getMenuItemNames() {
-        return menuItemNames;
-    }
-
-    public double[] getMenuItemPrices() {
+    private double[] getMenuItemPrices() {
         double[] prices = new double[menuItemPrices.size()];
         for (int i = 0; i < menuItemPrices.size(); i ++) {
             prices[i] = menuItemPrices.get(i).doubleValue();
