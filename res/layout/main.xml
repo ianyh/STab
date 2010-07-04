@@ -32,7 +32,7 @@
         android:layout_alignParentBottom="true"
         android:clickable="true"
         android:focusable="false"
-        android:text="+"
+        android:text="Add Menu Item"
         android:gravity="center" />
     <ListView
         android:id="@+id/menu_list_view"
