@@ -25,6 +25,7 @@
         android:autoText="false"
         android:capitalize="none"
         android:gravity="fill_horizontal"
+        android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
