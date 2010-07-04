@@ -40,7 +40,7 @@ public class STContactListAdapter extends SimpleCursorAdapter implements Filtera
             buffer.append("UPPER(");
             buffer.append(contactAccessor.getDisplayNameColumnName());
             buffer.append(") GLOB?");
-            args = new String[] { constraint.toString().toUpperCase() + "*" };
+            args = new String[] { "*" + constraint.toString().toUpperCase() + "*" };
         }
                 
         return contactAccessor.query(mContent, buffer.toString(), args);
