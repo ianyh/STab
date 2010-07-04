@@ -120,6 +120,8 @@ public class STab extends Activity implements OnClickListener
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, STConstants.MENU_EDIT_TAX, 0, "Edit " + STConstants.TAX);
         menu.add(0, STConstants.MENU_EDIT_TIP, 0, "Edit " + STConstants.TIP);
+        menu.add(0, STConstants.MENU_CLEAR_MENU, 0, "Clear Menu");
+        menu.add(0, STConstants.MENU_CLEAR_PEOPLE, 0, "Clear People");
         return true;
     }
     
@@ -131,6 +133,14 @@ public class STab extends Activity implements OnClickListener
             return true;
         case STConstants.MENU_EDIT_TIP:
             dataController.editTipByDialog();
+            return true;
+        case STConstants.MENU_CLEAR_MENU:
+            dataController.clearMenuItems();
+            menuListAdapter.notifyDataSetChanged();
+            return true;
+        case STConstants.MENU_CLEAR_PEOPLE:
+            dataController.clearPeople();
+            personListAdapter.notifyDataSetChanged();
             return true;
         }
 

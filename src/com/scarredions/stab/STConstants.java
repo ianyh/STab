@@ -6,6 +6,8 @@ public class STConstants {
      */
     public static final int MENU_EDIT_TAX = 0;
     public static final int MENU_EDIT_TIP = 1;
+    public static final int MENU_CLEAR_MENU = 2;
+    public static final int MENU_CLEAR_PEOPLE = 3;
     
     /**
      * Positions of views in the menu list footer

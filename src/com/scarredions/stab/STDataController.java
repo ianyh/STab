@@ -77,11 +77,28 @@ public class STDataController implements OnClickListener {
             tax = savedInstanceState.getDouble("tax");
             tip = savedInstanceState.getDouble("tip");
         } else {
-            personNames.add("you");
-            personIds.add(STConstants.PERSON_NULL_ID);
-            personPhotos.add(null);
-            personSelections.add(new HashSet<Integer>());
+            this.addDefaultPerson();
         }
+    }
+    
+    public void addDefaultPerson() {
+        personNames.add("you");
+        personIds.add(STConstants.PERSON_NULL_ID);
+        personPhotos.add(null);
+        personSelections.add(new HashSet<Integer>());        
+    }
+    
+    public void clearPeople() {
+        personNames.clear();
+        personIds.clear();
+        personPhotos.clear();
+        personSelections.clear();
+        addDefaultPerson();
+    }
+    
+    public void clearMenuItems() {
+        menuItemNames.clear();
+        menuItemPrices.clear();
     }
     
     public boolean currentPersonHasSelected(int menuListPosition) {
