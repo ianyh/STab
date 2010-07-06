@@ -107,7 +107,7 @@ public class STDataController implements OnClickListener {
     }
     
     public Bitmap getBitmapFromId(Context context, String contactId) {
-        if (contactId.equals(STConstants.PERSON_NULL_ID)) {
+        if (contactId == null || contactId.equals(STConstants.PERSON_NULL_ID)) {
             return null;
         }
         

@@ -191,4 +191,16 @@ public class STab extends Activity implements OnClickListener
         }
     }
     
+    public STDataController getDataController() {
+        return dataController;
+    }
+    
+    public STPersonListAdapter getPersonListAdapter() {
+        return personListAdapter;
+    }
+    
+    public STMenuListAdapter getMenuListAdapter() {
+        return menuListAdapter;
+    }
+    
 }

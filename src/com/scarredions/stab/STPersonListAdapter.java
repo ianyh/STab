@@ -24,6 +24,8 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
     private STDataController dataController;
     private SimpleCursorAdapter contactsAutoCompleteAdapter;
     
+    private AlertDialog addPersonDialog;
+    
     public STPersonListAdapter(Context context, STDataController dataController) {
         this.context = context;
         this.dataController = dataController;
@@ -89,11 +91,13 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
         AutoCompleteTextView textEntryView = (AutoCompleteTextView) dialogLayout.findViewById(R.id.name_edit);
         textEntryView.setAdapter(contactsAutoCompleteAdapter);
         
-        new AlertDialog.Builder(context)
+        addPersonDialog = new AlertDialog.Builder(context)
             .setView(dialogLayout)
             .setPositiveButton("OK", this)
             .setNegativeButton("Cancel", this)
-            .create().show();
+            .create();
+        
+        addPersonDialog.show();
     }
         
     public void onClick(DialogInterface dialog, int whichButton) {
@@ -104,6 +108,8 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
             add(name, contactId);
             this.notifyDataSetChanged();
         }
+        
+        addPersonDialog = null;
     }
 
     public void setContactsAutoCompleteAdapter(SimpleCursorAdapter adapter) {
@@ -116,6 +122,10 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
     
     public void setPersonListView(Gallery personListView) {
         this.personListView = personListView;
+    }
+    
+    public AlertDialog getAddPersonDialog() {
+        return addPersonDialog;
     }
     
 }

@@ -31,7 +31,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:clickable="true"
-        android:focusable="false"
         android:text="Add Menu Item"
         android:gravity="center" />
     <ListView

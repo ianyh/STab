@@ -19,6 +19,8 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
     private Context context;
     private STDataController dataController;
     
+    private AlertDialog addMenuItemDialog;
+    
     public STMenuListAdapter(Context context, STDataController dataController) {
         this.context = context;
         this.dataController = dataController;
@@ -74,11 +76,13 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
         LayoutInflater factory = LayoutInflater.from(getContext());
         final View textEntryView = factory.inflate(R.layout.dialog_menu_item_entry, null);
         
-        new AlertDialog.Builder(getContext())
+        addMenuItemDialog = new AlertDialog.Builder(getContext())
             .setView(textEntryView)
             .setPositiveButton("OK", this)
             .setNegativeButton("Cancel", this)
-            .create().show();
+            .create();
+        
+        addMenuItemDialog.show();
     }
     
     @Override
@@ -101,10 +105,16 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
             
             this.notifyDataSetChanged();
         }
+        
+        addMenuItemDialog = null;
     }
     
     public static String getFormattedPrice(Double price) {
         return NumberFormat.getCurrencyInstance().format(price.doubleValue());
+    }
+    
+    public AlertDialog getAddMenuItemDialog() {
+        return addMenuItemDialog;
     }
     
 }
