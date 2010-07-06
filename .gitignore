@@ -1,8 +1,10 @@
 *.xcodeproj
 bin/*
+test/bin/*
 build/*
-local.properties
+test/build/*
+*local.properties
 *~
-.classpath
-.project
-.settings*
+*.classpath
+*.project
+*.settings*
