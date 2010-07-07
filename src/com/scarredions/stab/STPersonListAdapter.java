@@ -103,7 +103,12 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
     public void onClick(DialogInterface dialog, int whichButton) {
         if (whichButton == DialogInterface.BUTTON_POSITIVE) {
             AlertDialog d = (AlertDialog) dialog;
-            String name = ((AutoCompleteTextView) d.findViewById(R.id.name_edit)).getText().toString();
+            AutoCompleteTextView nameView = (AutoCompleteTextView) d.findViewById(R.id.name_edit);
+            String name = nameView.getText().toString();
+            if (name.equals("")) {
+                addPersonDialog = null;
+                return;
+            }
             String contactId = dataController.getAndClearAutoCompletedContactId();
             add(name, contactId);
             this.notifyDataSetChanged();
