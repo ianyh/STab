@@ -1,5 +1,10 @@
 package com.scarredions.stab;
 
+/**
+ * Container for various constants.
+ * @author ianyh
+ *
+ */
 public class STConstants {
     /**
      * Constants for switching on menu selection

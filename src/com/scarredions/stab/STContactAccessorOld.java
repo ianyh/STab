@@ -13,6 +13,11 @@ import android.provider.BaseColumns;
 import android.provider.Contacts;
 import android.provider.Contacts.PeopleColumns;
 
+/**
+ * Contacts accessor using the old Contacts.People API.
+ * @author ianyh
+ *
+ */
 @SuppressWarnings("deprecation")
 public class STContactAccessorOld extends STContactAccessor {
 
@@ -23,17 +28,42 @@ public class STContactAccessorOld extends STContactAccessor {
         BaseColumns._ID,
         PeopleColumns.DISPLAY_NAME
     };
-    
+
+    /**
+     * 
+     * @return The name of the DISPLAY_NAME column in the Contacts database.
+     */
     @Override
-    public Cursor managedQuery(Activity activity) {
-        return activity.managedQuery(
-                Contacts.People.CONTENT_URI,
-                CONTACTS_PROJECTION,
-                null,
-                null,
-                PeopleColumns.DISPLAY_NAME);
+    public String getDisplayNameColumnName() {
+        return PeopleColumns.DISPLAY_NAME;
     }
 
+    /**
+     * 
+     * @param cursor
+     * @return the index of the _ID column for the input cursor.
+     */
+    @Override
+    public int getIdColumnIndex(Cursor cursor) {
+        return cursor.getColumnIndex(BaseColumns._ID);
+    }
+
+    /**
+     * 
+     * @param cursor
+     * @return the index of the DISPLAY_NAME column in the input cursor.
+     */
+    @Override
+    public int getNameColumnIndex(Cursor cursor) {
+        return cursor.getColumnIndex(PeopleColumns.DISPLAY_NAME);
+    }
+
+    /**
+     * Loads a contacts photo from contact ID.
+     * @param context
+     * @param contactId
+     * @return Bitmap of the contact's photo.
+     */
     @Override
     public Bitmap loadContactPhotoFromId(Context context, String contactId) {
         InputStream contactPhotoStream = Contacts.People.openContactPhotoInputStream(
@@ -44,21 +74,28 @@ public class STContactAccessorOld extends STContactAccessor {
         return BitmapFactory.decodeStream(contactPhotoStream);
     }
 
+    /**
+     * Runs a managed query to grab contacts for auto-completion on adding people. 
+     * @param activity Activity managing the query.
+     * @return
+     */
     @Override
-    public int getIdColumnIndex(Cursor cursor) {
-        return cursor.getColumnIndex(BaseColumns._ID);
+    public Cursor managedQuery(Activity activity) {
+        return activity.managedQuery(
+                Contacts.People.CONTENT_URI,
+                CONTACTS_PROJECTION,
+                null,
+                null,
+                PeopleColumns.DISPLAY_NAME);
     }
 
-    @Override
-    public int getNameColumnIndex(Cursor cursor) {
-        return cursor.getColumnIndex(PeopleColumns.DISPLAY_NAME);
-    }
-
-    @Override
-    public String getDisplayNameColumnName() {
-        return PeopleColumns.DISPLAY_NAME;
-    }
-
+    /**
+     * Runs a constrained query to narrow down auto-complete options.
+     * @param content
+     * @param constraint
+     * @param args
+     * @return
+     */
     @Override
     public Cursor query(ContentResolver content, String constraint, String[] args) {
         return content.query(

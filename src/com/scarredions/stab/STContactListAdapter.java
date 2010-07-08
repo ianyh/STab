@@ -6,18 +6,26 @@ import android.database.Cursor;
 import android.widget.Filterable;
 import android.widget.SimpleCursorAdapter;
 
+/**
+ * Adapter used by the AutoCompleteTextView in the add person dialog.
+ * @author ianyh
+ *
+ */
 public class STContactListAdapter extends SimpleCursorAdapter implements Filterable {
 
     private final STContactAccessor contactAccessor = STContactAccessor.getInstance();
     private ContentResolver mContent;
     private STDataController dataController;
-
+        
     public STContactListAdapter(Context context, int layout, Cursor c, String[] from, int[] to, STDataController dataController) {
         super(context, layout, c, from, to);
         mContent = context.getContentResolver();
         this.dataController = dataController;
     }
-        
+    
+    /**
+     * Use DISPLAY_NAME as the String conversion.
+     */
     @Override
     public String convertToString(Cursor cursor) {
         int idIndex = contactAccessor.getIdColumnIndex(cursor);
@@ -27,6 +35,9 @@ public class STContactListAdapter extends SimpleCursorAdapter implements Filtera
         return cursor.getString(nameIndex);
     }
     
+    /**
+     * Filter the query based on substrings of names.
+     */
     @Override
     public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
         if (getFilterQueryProvider() != null) {

@@ -20,6 +20,13 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 
+/**
+ * The main application activity. 
+ * Also acts as OnClickListener for buttons for adding people and menu items.
+ * 
+ * @author ianyh
+ *
+ */
 public class STab extends Activity implements OnClickListener
 {
     private final STContactAccessor contactsAccessor = STContactAccessor.getInstance();
@@ -29,6 +36,93 @@ public class STab extends Activity implements OnClickListener
     private STDataController dataController;
     private Button addPersonButton;
     private Button addMenuItemButton;
+    
+    /**
+     * Does some specific processing to make the button layout correctly
+     * @return the add person button
+     */
+    public Button fixAndGetAddPersonButton() {
+        Button b = (Button) findViewById(R.id.add_person_button);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) b.getLayoutParams();
+        params.addRule(RelativeLayout.ABOVE, R.id.divider);
+        b.setLayoutParams(params);
+        return b;
+    }
+    
+    public Cursor getContacts() {
+        return contactsAccessor.managedQuery(this);
+    }
+    
+    /**
+     * 
+     * @return The activity's data controller.
+     */
+    public STDataController getDataController() {
+        return dataController;
+    }
+    
+    /**
+     * 
+     * @return The activity's menu item list's adapter
+     */
+    public STMenuListAdapter getMenuListAdapter() {
+        return menuListAdapter;
+    }
+    
+    /**
+     * 
+     * @return The activity's person list's adapter
+     */
+    public STPersonListAdapter getPersonListAdapter() {
+        return personListAdapter;
+    }
+    
+    /**
+     * Inflates the view for presenting tax in the menu item list footer.
+     * @return the inflated view
+     */
+    public View inflateMenuListTaxView() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        LinearLayout taxView = (LinearLayout) factory.inflate(R.layout.list_total, null);
+        String taxText = STConstants.TAX + " (" + dataController.getFormattedTaxPercentage() + ")";
+        ((TextView) taxView.findViewById(R.id.list_footer_text)).setText(taxText);
+        
+        return taxView;
+    }
+    
+    /**
+     * Inflates the view for presenting tip in the menu item list footer
+     * @return the inflated view
+     */
+    public View inflateMenuListTipView() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        LinearLayout tipView = (LinearLayout) factory.inflate(R.layout.list_total, null);
+        String tipText = STConstants.TIP + " (" + dataController.getFormattedTipPercentage() + ")";
+        ((TextView) tipView.findViewById(R.id.list_footer_text)).setText(tipText);
+        
+        return tipView;
+    }
+    
+    /**
+     * Inflates the view for presenting totals in the menu item list footer
+     * @return the inflated view
+     */
+    public View inflateMenuListTotalView() {
+        LayoutInflater factory = LayoutInflater.from(this);
+        return factory.inflate(R.layout.list_total, null);
+    }
+    
+    /**
+     * Click listener for add person/menu item buttons.
+     */
+    public void onClick(View v) {
+        Button b = (Button) v;
+        if (b == addPersonButton) {
+            personListAdapter.addPersonByDialog();
+        } else if (b == addMenuItemButton) {
+            menuListAdapter.addMenuItemByDialog();
+        }
+    }
     
     /** Called when the activity is first created. */
     @Override
@@ -42,10 +136,44 @@ public class STab extends Activity implements OnClickListener
     }
     
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, STConstants.MENU_EDIT_TAX, 0, "Edit " + STConstants.TAX);
+        menu.add(0, STConstants.MENU_EDIT_TIP, 0, "Edit " + STConstants.TIP);
+        menu.add(0, STConstants.MENU_CLEAR_MENU, 0, "Clear Menu");
+        menu.add(0, STConstants.MENU_CLEAR_PEOPLE, 0, "Clear People");
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+        case STConstants.MENU_EDIT_TAX:
+            dataController.editTaxByDialog();
+            return true;
+        case STConstants.MENU_EDIT_TIP:
+            dataController.editTipByDialog();
+            return true;
+        case STConstants.MENU_CLEAR_MENU:
+            dataController.clearMenuItems();
+            menuListAdapter.notifyDataSetChanged();
+            return true;
+        case STConstants.MENU_CLEAR_PEOPLE:
+            dataController.clearPeople();
+            personListAdapter.notifyDataSetChanged();
+            return true;
+        }
+
+        return false;
+    }
+    
+    @Override
     public void onSaveInstanceState(Bundle bundle) {
         dataController.saveInstanceState(bundle);
     }
-    
+
+    /**
+     * Initializes the main layout.
+     */
     public void updateLayout() {
         addPersonButton = fixAndGetAddPersonButton();
         addPersonButton.setOnClickListener(this);
@@ -105,102 +233,14 @@ public class STab extends Activity implements OnClickListener
                 adapter.getMenuListAdapter().notifyDataSetChanged();
             }
         });
-        personListAdapter.setPersonListView(personListView);
         
-        Cursor cursor = getContacts();
+        Cursor cursor = contactsAccessor.managedQuery(this);
         STContactListAdapter contactsAdapter = new STContactListAdapter(this,
                 R.layout.autocomplete_list_item, cursor,
                 new String[] { contactsAccessor.getDisplayNameColumnName() },
                 new int[] { R.id.autocomplete_text },
                 dataController);
         personListAdapter.setContactsAutoCompleteAdapter(contactsAdapter);
-    }
-    
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, STConstants.MENU_EDIT_TAX, 0, "Edit " + STConstants.TAX);
-        menu.add(0, STConstants.MENU_EDIT_TIP, 0, "Edit " + STConstants.TIP);
-        menu.add(0, STConstants.MENU_CLEAR_MENU, 0, "Clear Menu");
-        menu.add(0, STConstants.MENU_CLEAR_PEOPLE, 0, "Clear People");
-        return true;
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-        case STConstants.MENU_EDIT_TAX:
-            dataController.editTaxByDialog();
-            return true;
-        case STConstants.MENU_EDIT_TIP:
-            dataController.editTipByDialog();
-            return true;
-        case STConstants.MENU_CLEAR_MENU:
-            dataController.clearMenuItems();
-            menuListAdapter.notifyDataSetChanged();
-            return true;
-        case STConstants.MENU_CLEAR_PEOPLE:
-            dataController.clearPeople();
-            personListAdapter.notifyDataSetChanged();
-            return true;
-        }
-
-        return false;
-    }
-    
-    public Button fixAndGetAddPersonButton() {
-        Button b = (Button) findViewById(R.id.add_person_button);
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) b.getLayoutParams();
-        params.addRule(RelativeLayout.ABOVE, R.id.divider);
-        b.setLayoutParams(params);
-        return b;
-    }
-    
-    public View inflateMenuListTotalView() {
-        LayoutInflater factory = LayoutInflater.from(this);
-        return factory.inflate(R.layout.list_total, null);
-    }
-    
-    public View inflateMenuListTaxView() {
-        LayoutInflater factory = LayoutInflater.from(this);
-        LinearLayout taxView = (LinearLayout) factory.inflate(R.layout.list_total, null);
-        String taxText = STConstants.TAX + " (" + dataController.getFormattedTaxPercentage() + ")";
-        ((TextView) taxView.findViewById(R.id.list_footer_text)).setText(taxText);
-        
-        return taxView;
-    }
-    
-    public View inflateMenuListTipView() {
-        LayoutInflater factory = LayoutInflater.from(this);
-        LinearLayout tipView = (LinearLayout) factory.inflate(R.layout.list_total, null);
-        String tipText = STConstants.TIP + " (" + dataController.getFormattedTipPercentage() + ")";
-        ((TextView) tipView.findViewById(R.id.list_footer_text)).setText(tipText);
-        
-        return tipView;
-    }
-    
-    public Cursor getContacts() {
-        return contactsAccessor.managedQuery(this);
-    }
-    
-    public void onClick(View v) {
-        Button b = (Button) v;
-        if (b == addPersonButton) {
-            personListAdapter.addPersonByDialog();
-        } else if (b == addMenuItemButton) {
-            menuListAdapter.addMenuItemByDialog();
-        }
-    }
-    
-    public STDataController getDataController() {
-        return dataController;
-    }
-    
-    public STPersonListAdapter getPersonListAdapter() {
-        return personListAdapter;
-    }
-    
-    public STMenuListAdapter getMenuListAdapter() {
-        return menuListAdapter;
     }
     
 }
