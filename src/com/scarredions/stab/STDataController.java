@@ -17,27 +17,56 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+/**
+ * Data controller for the whole application. 
+ * Keeps people, menu items, tax percentage, and tip percentage.
+ * Responsible for keeping the menu list footer updated.
+ * @author ianyh
+ *
+ */
 public class STDataController implements OnClickListener {
+    
+    /**
+     * Static method for formatting a percentage as a String.
+     * @param value
+     * @return Percentage-formatted String of value.
+     */
+    private static String getFormattedPercentage(double value) {
+        return NumberFormat.getPercentInstance().format(value);
+    }
+    
+    /**
+     * Static method for formatting a price as a String.
+     * @param price
+     * @return Currency-formatted String of price.
+     */
+    private static String getFormattedPrice(Double price) {
+        return NumberFormat.getCurrencyInstance().format(price.doubleValue());
+    }
     
     private final STContactAccessor contactsAccessor = STContactAccessor.getInstance();
     
     // TODO: get this from location?
     private double tax = 0.08;
     private double tip = 0.2;
-    
     private ArrayList<String> personNames;
     private ArrayList<String> personIds;
     private ArrayList<Bitmap> personPhotos;
+    
     private ArrayList<HashSet<Integer>> personSelections;
     private int currentPersonId;
     
     private ArrayList<String> menuItemNames;
+    
     private ArrayList<Double> menuItemPrices;
     
     private LinearLayout menuListFooter;
     
     private String autoCompletedContactId;
     
+    /**
+     * Initializes all of the peope/menu item parallel arrays.
+     */
     public STDataController() {
         personNames = new ArrayList<String>();
         personIds = new ArrayList<String>();
@@ -48,6 +77,13 @@ public class STDataController implements OnClickListener {
         menuItemPrices = new ArrayList<Double>();
     }
     
+    /**
+     * Initialize from a savedInstanceState. If there is no savedInstanceState 
+     * make sure that there is at least one person in the gallery data set otherwise
+     * it doesn't display.
+     * @param context
+     * @param savedInstanceState
+     */
     public STDataController(Context context, Bundle savedInstanceState) {
         this();
         if (savedInstanceState != null) {
@@ -81,13 +117,51 @@ public class STDataController implements OnClickListener {
         }
     }
     
-    public void addDefaultPerson() {
+    /**
+     * Helper method for adding the "default person." Mostly to ensure that the
+     * Gallery actually displays.
+     */
+    private void addDefaultPerson() {
         personNames.add("you");
         personIds.add(STConstants.PERSON_NULL_ID);
         personPhotos.add(null);
         personSelections.add(new HashSet<Integer>());        
     }
     
+    /**
+     * Adds a menu item.
+     * @param name
+     * @param price
+     */
+    public void addMenuItem(String name, Double price) {
+        menuItemNames.add(name);
+        menuItemPrices.add(price);
+    }
+    
+    /**
+     * Adds a person and loads their photo if available.
+     * @param name
+     * @param id _ID from Contacts if exists.
+     */
+    public void addPerson(String name, String id) {
+        personNames.add(name);
+        personIds.add(id);
+        personPhotos.add(getBitmapFromId(menuListFooter.getContext(), id));
+        personSelections.add(new HashSet<Integer>());
+        updateMenuListFooter();
+    }
+    
+    /**
+     * Clears all menu item state.
+     */
+    public void clearMenuItems() {
+        menuItemNames.clear();
+        menuItemPrices.clear();
+    }
+
+    /**
+     * Clears all person state, ensuring that the Gallery still displays.
+     */
     public void clearPeople() {
         personNames.clear();
         personIds.clear();
@@ -96,16 +170,67 @@ public class STDataController implements OnClickListener {
         addDefaultPerson();
     }
     
-    public void clearMenuItems() {
-        menuItemNames.clear();
-        menuItemPrices.clear();
-    }
-    
+    /**
+     * 
+     * @param menuListPosition
+     * @return true if the currently selected person has the menu item identified by
+     * menuListPosition selected, false otherwise.
+     */
     public boolean currentPersonHasSelected(int menuListPosition) {
         Set<Integer> selections = getCurrentPersonsSelections();
         return selections.contains(Integer.valueOf(menuListPosition));
     }
     
+    /**
+     * Launches a dialog for editing either tax or tip.
+     * @param type Type of dialog to launch (tax or tip)
+     * @param value The current value of the type.
+     */
+    private void editByDialog(String type, Double value) {
+        LayoutInflater factory = LayoutInflater.from(menuListFooter.getContext());
+        LinearLayout dialogLayout = (LinearLayout) factory.inflate(R.layout.dialog_tax_or_tip_entry, null);
+        ((TextView) dialogLayout.findViewById(R.id.value_view)).setText(type);
+        ((EditText) dialogLayout.findViewById(R.id.value_edit)).setText(value.toString());
+        
+        new AlertDialog.Builder(menuListFooter.getContext())
+            .setView(dialogLayout)
+            .setPositiveButton("OK", this)
+            .setNegativeButton("Cancel", this)
+            .create().show();
+    }
+    
+    /**
+     * Launches a dialog for editing tax.
+     */
+    public void editTaxByDialog() {
+        editByDialog(STConstants.TAX, Double.valueOf(tax));
+    }
+    
+    /**
+     * Launches a dialog for editing tip.
+     */
+    public void editTipByDialog() {
+        editByDialog(STConstants.TIP, Double.valueOf(tip));
+    }
+    
+    /**
+     * As a side effect, nulls out the autoCompletedContactId to prevent accidental
+     * repeated contact IDs. 
+     * @return most recent ID selected through auto complete in the add person dialog.
+     */
+    public String getAndClearAutoCompletedContactId() {
+        String id = autoCompletedContactId;
+        autoCompletedContactId = null;
+        return id;
+    }
+    
+    /**
+     * If the contactId is valid, loads and returns the appropriate Bitmap, otherwise
+     * returns null.
+     * @param context
+     * @param contactId
+     * @return Contact photo Bitmap if exists.
+     */
     public Bitmap getBitmapFromId(Context context, String contactId) {
         if (contactId == null || contactId.equals(STConstants.PERSON_NULL_ID)) {
             return null;
@@ -114,10 +239,56 @@ public class STDataController implements OnClickListener {
         return contactsAccessor.loadContactPhotoFromId(context, contactId);
     }
     
+    /**
+     * 
+     * @return currently selected persons hash of selected menu item ids.
+     */
     public HashSet<Integer> getCurrentPersonsSelections() {
         return personSelections.get(currentPersonId);
     }
-
+    
+    public String getFormattedTaxPercentage() {
+        return getFormattedPercentage(tax);
+    }
+    
+    public String getFormattedTipPercentage() {
+        return getFormattedPercentage(tip);
+    }
+        
+    public int getMenuItemCount() {
+        return menuItemNames.size();
+    }
+    
+    public String getMenuItemName(int position) {
+        return menuItemNames.get(position);
+    }
+    
+    public Double getMenuItemPrice(int position) {
+        return menuItemPrices.get(position);
+    }
+    
+    /**
+     * Returns a primitive array of price doubles for serializing into
+     * a saved state Bundle.
+     * @return menu item prices as a primitive array of doubles.
+     */
+    private double[] getMenuItemPrices() {
+        double[] prices = new double[menuItemPrices.size()];
+        for (int i = 0; i < menuItemPrices.size(); i ++) {
+            prices[i] = menuItemPrices.get(i).doubleValue();
+        }
+        return prices;
+    }
+    
+    public View getMenuListFooter() {
+        return menuListFooter;
+    }
+    
+    /**
+     * 
+     * @param menuListPosition
+     * @return the number of people who have selected the menu at menuListPosition.
+     */
     public int getNumberOfPeopleWithSelection(int menuListPosition) {
         int counter = 0;
         for(HashSet<Integer> selections : personSelections) {
@@ -128,86 +299,6 @@ public class STDataController implements OnClickListener {
             }
         }
         return counter;
-    }
-    
-    private static String getFormattedPercentage(double value) {
-        return NumberFormat.getPercentInstance().format(value);
-    }
-    
-    public String getFormattedTaxPercentage() {
-        return getFormattedPercentage(tax);
-    }
-    
-    public String getFormattedTipPercentage() {
-        return getFormattedPercentage(tip);
-    }
-    
-    public Double getTax() {
-        return getTotal() * tax;
-    }
-    
-    public Double getTip() {
-        return (getTotal() + getTax()) * tip;
-    }
-    
-    public Double getTotal() {
-        double total = 0;
-        int menuItemPricesLen = menuItemPrices.size();
-
-        for(int i = 0; i < menuItemPricesLen; i++) {
-            total += menuItemPrices.get(i).doubleValue();
-        }
-        
-        return Double.valueOf(total);
-    }
-    
-    public Double getPersonTax() {
-        return getTax() / personSelections.size();
-    }
-    
-    public Double getPersonTip() {
-        return getTip() / personSelections.size();
-    }
-    
-    public Double getPersonTotal() {
-        double total = 0;
-        for (Integer selection : getCurrentPersonsSelections()) {
-            total += getMenuItemPrice(selection.intValue()).doubleValue() /
-                getNumberOfPeopleWithSelection(selection.intValue());
-        }
-        return total;
-    }
-        
-    public String getMenuItemName(int position) {
-        return menuItemNames.get(position);
-    }
-    
-    public Double getMenuItemPrice(int position) {
-        return menuItemPrices.get(position);
-    }
-    
-    private static String getFormattedPrice(Double price) {
-        return NumberFormat.getCurrencyInstance().format(price.doubleValue());
-    }
-    
-    public int getMenuItemCount() {
-        return menuItemNames.size();
-    }
-    
-    public View getMenuListFooter() {
-        return menuListFooter;
-    }
-    
-    public View getTaxView() {
-        return menuListFooter.getChildAt(STConstants.MENU_LIST_FOOTER_TAX_POSITION);
-    }
-    
-    public View getTipView() {
-        return menuListFooter.getChildAt(STConstants.MENU_LIST_FOOTER_TIP_POSITION);
-    }
-    
-    public View getTotalView() {
-        return menuListFooter.getChildAt(STConstants.MENU_LIST_FOOTER_TOTAL_POSITION);
     }
     
     public int getPersonCount() {
@@ -222,94 +313,103 @@ public class STDataController implements OnClickListener {
         return personPhotos.get(position);
     }
     
-    public void addPerson(String name, String id) {
-        personNames.add(name);
-        personIds.add(id);
-        personPhotos.add(getBitmapFromId(menuListFooter.getContext(), id));
-        personSelections.add(new HashSet<Integer>());
-        updateMenuListFooter();
+    /**
+     * 
+     * @return per person share of tax
+     */
+    public Double getPersonTax() {
+        return getTax() / personSelections.size();
     }
     
-    public void addMenuItem(String name, Double price) {
-        menuItemNames.add(name);
-        menuItemPrices.add(price);
-    }
-
-    public void setMenuListFooter(LinearLayout footerView) {
-        menuListFooter = footerView;
-    }
-        
-    public void setCurrentPersonId(int personId) {
-        currentPersonId = personId;
+    /**
+     * 
+     * @return per person share of tip
+     */
+    public Double getPersonTip() {
+        return getTip() / personSelections.size();
     }
     
-    public void setAutoCompletedContactId(String contactId) {
-        this.autoCompletedContactId = contactId;
-    }
-    
-    public String getAndClearAutoCompletedContactId() {
-        String id = autoCompletedContactId;
-        autoCompletedContactId = null;
-        return id;
-    }
-    
-    public void setTaxPercentage(double newTax) {
-        tax = newTax;
-        TextView taxView = (TextView) ((LinearLayout) getTaxView()).findViewById(R.id.list_footer_text);
-        taxView.setText(STConstants.TAX + " (" + getFormattedTaxPercentage() + ")");
-        updateTax();
-    }
-    
-    public void setTipPercentage(double newTip) {
-        tip = newTip;
-        TextView tipView = (TextView) ((LinearLayout) getTipView()).findViewById(R.id.list_footer_text);
-        tipView.setText(STConstants.TIP + " (" + getFormattedTipPercentage() + ")");
-        updateTip();
-    }
-    
-    public void setSelection(int menuListPosition, boolean checked) {
-        HashSet<Integer> selections = getCurrentPersonsSelections();
-        if (checked) {
-            selections.add(Integer.valueOf(menuListPosition));
-        } else {
-            selections.remove(Integer.valueOf(menuListPosition));
+    /**
+     * 
+     * @return total amount of owed by currently selected person
+     */
+    public Double getPersonTotal() {
+        double total = 0;
+        for (Integer selection : getCurrentPersonsSelections()) {
+            total += getMenuItemPrice(selection.intValue()).doubleValue() /
+                getNumberOfPeopleWithSelection(selection.intValue());
         }
+        return total;
+    }
+    
+    /**
+     * 
+     * @return tax owed on the entire bill
+     */
+    public Double getTax() {
+        return getTotal() * tax;
     }
 
-    public void updateMenuListFooter() {
-        updateTax();
+    /**
+     * 
+     * @return View within the menu list footer that displays tax 
+     */
+    public View getTaxView() {
+        return menuListFooter.getChildAt(STConstants.MENU_LIST_FOOTER_TAX_POSITION);
+    }
+     
+    /**
+     * 
+     * @return tip owed on the entire bill
+     */
+    public Double getTip() {
+        return (getTotal() + getTax()) * tip;
     }
     
-    public void updateTax() {
-        TextView tax = (TextView) ((LinearLayout) getTaxView()).findViewById(R.id.list_footer_value);
-        tax.setText(getFormattedPrice(getPersonTax()));
-        updateTip();
+    /**
+     * 
+     * @return View within the menu list footer that displays tip
+     */
+    public View getTipView() {
+        return menuListFooter.getChildAt(STConstants.MENU_LIST_FOOTER_TIP_POSITION);
     }
     
-    public void updateTip() {
-        TextView tip = (TextView) ((LinearLayout) getTipView()).findViewById(R.id.list_footer_value);
-        tip.setText(getFormattedPrice(getPersonTip()));
-        updateTotal();
-    }
-    
-    public void updateTotal() {
-        TextView total = (TextView) ((LinearLayout) getTotalView()).findViewById(R.id.list_footer_value);
-        total.setText(getFormattedPrice(getPersonTotal() + getPersonTax() + getPersonTip()));
-    }
-    
-    public void editTaxByDialog() {
-        editByDialog(STConstants.TAX, Double.valueOf(tax));
-    }
-    
-    public void editTipByDialog() {
-        editByDialog(STConstants.TIP, Double.valueOf(tip));
-    }
+    /**
+     * 
+     * @return total owed on the bill before tax and tip
+     */
+    public Double getTotal() {
+        double total = 0;
+        int menuItemPricesLen = menuItemPrices.size();
 
+        for(int i = 0; i < menuItemPricesLen; i++) {
+            total += menuItemPrices.get(i).doubleValue();
+        }
+        
+        return Double.valueOf(total);
+    }
+    
+    /**
+     * 
+     * @return View within the menu list footer that displays total
+     */
+    public View getTotalView() {
+        return menuListFooter.getChildAt(STConstants.MENU_LIST_FOOTER_TOTAL_POSITION);
+    }
+    
+    /**
+     * Click handler for tax/tip edit dialog.
+     * 
+     * Fails silently if the value entered is empty.
+     */
     public void onClick(DialogInterface dialog, int whichButton) {
         if (whichButton == DialogInterface.BUTTON_POSITIVE) {
             AlertDialog d = (AlertDialog) dialog;
             String type = ((TextView) d.findViewById(R.id.value_view)).getText().toString();
             String value = ((EditText) d.findViewById(R.id.value_edit)).getText().toString();
+            if (value.equals("")) {
+                return;
+            }
             if (type.equals("Tax")) {
                 setTaxPercentage(Double.valueOf(value));
             } else if (type.equals("Tip")) {
@@ -318,19 +418,11 @@ public class STDataController implements OnClickListener {
         }
     }
     
-    private void editByDialog(String type, Double value) {
-        LayoutInflater factory = LayoutInflater.from(menuListFooter.getContext());
-        LinearLayout dialogLayout = (LinearLayout) factory.inflate(R.layout.dialog_tax_or_tip_entry, null);
-        ((TextView) dialogLayout.findViewById(R.id.value_view)).setText(type);
-        ((EditText) dialogLayout.findViewById(R.id.value_edit)).setText(value.toString());
-        
-        new AlertDialog.Builder(menuListFooter.getContext())
-            .setView(dialogLayout)
-            .setPositiveButton("OK", this)
-            .setNegativeButton("Cancel", this)
-            .create().show();
-    }
-
+    /**
+     * Serializes all necessary state into the given Bundle.
+     * Does not serialize contact photos. Those are reloaded from IDs on restore.
+     * @param bundle
+     */
     public void saveInstanceState(Bundle bundle) {
         /**
          * Save person data
@@ -363,11 +455,102 @@ public class STDataController implements OnClickListener {
         
     }
 
-    private double[] getMenuItemPrices() {
-        double[] prices = new double[menuItemPrices.size()];
-        for (int i = 0; i < menuItemPrices.size(); i ++) {
-            prices[i] = menuItemPrices.get(i).doubleValue();
+    /**
+     * Used to hold the contact id of a selection from the auto complete
+     * in the add person dialog.
+     * @param contactId
+     */
+    public void setAutoCompletedContactId(String contactId) {
+        this.autoCompletedContactId = contactId;
+    }
+    
+    /**
+     * Sets currently selected id so we can keep track of who is selected.
+     * @param personId
+     */
+    public void setCurrentPersonId(int personId) {
+        currentPersonId = personId;
+    }
+    
+    /**
+     * Keep menu list footer in state for updating.
+     * @param footerView
+     */
+    public void setMenuListFooter(LinearLayout footerView) {
+        menuListFooter = footerView;
+    }
+    
+    /**
+     * Toggles the selection of the menu item identified by menuListPosition for
+     * the currently selected person.
+     * @param menuListPosition
+     * @param checked
+     */
+    public void setSelection(int menuListPosition, boolean checked) {
+        HashSet<Integer> selections = getCurrentPersonsSelections();
+        if (checked) {
+            selections.add(Integer.valueOf(menuListPosition));
+        } else {
+            selections.remove(Integer.valueOf(menuListPosition));
         }
-        return prices;
+    }
+    
+    /**
+     * Sets a new tax percentage and updates the appropriate view to reflect change.
+     * @param newTax
+     */
+    public void setTaxPercentage(double newTax) {
+        tax = newTax;
+        TextView taxView = (TextView) ((LinearLayout) getTaxView()).findViewById(R.id.list_footer_text);
+        taxView.setText(STConstants.TAX + " (" + getFormattedTaxPercentage() + ")");
+        updateTax();
+    }
+    
+    /**
+     * Sets a new tip percentage and updates the appropriate view to reflect change.
+     * @param newTip
+     */
+    public void setTipPercentage(double newTip) {
+        tip = newTip;
+        TextView tipView = (TextView) ((LinearLayout) getTipView()).findViewById(R.id.list_footer_text);
+        tipView.setText(STConstants.TIP + " (" + getFormattedTipPercentage() + ")");
+        updateTip();
+    }
+
+    /**
+     * Begins chain of menu list footer updates at the bottom.
+     * updateMenuListFooter() -> updateTax() -> updateTip() -> updateTotal()
+     */
+    public void updateMenuListFooter() {
+        updateTax();
+    }
+    
+    /**
+     * Updates the tax owed, and then forces an update of tip, which depends on tax.
+     * updateTax() -> updateTip() -> updateTotal()
+     */
+    public void updateTax() {
+        TextView tax = (TextView) ((LinearLayout) getTaxView()).findViewById(R.id.list_footer_value);
+        tax.setText(getFormattedPrice(getPersonTax()));
+        updateTip();
+    }
+
+    /**
+     * Updates the tip owed, and then forces an update of total, which depends on tip.
+     * updateTip() -> updateTotal()
+     */
+    public void updateTip() {
+        TextView tip = (TextView) ((LinearLayout) getTipView()).findViewById(R.id.list_footer_value);
+        tip.setText(getFormattedPrice(getPersonTip()));
+        updateTotal();
+    }
+
+    /**
+     * Updates the total owed.
+     * updateTotal()
+     */
+    public void updateTotal() {
+        TextView total = (TextView) ((LinearLayout) getTotalView()).findViewById(R.id.list_footer_value);
+        total.setText(getFormattedPrice(getPersonTotal() + getPersonTax() + getPersonTip()));
     }
 }
