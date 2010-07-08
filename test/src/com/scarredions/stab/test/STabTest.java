@@ -18,30 +18,6 @@ public class STabTest extends ActivityInstrumentationTestCase2<STab> {
         super("com.scarredions.stab", STab.class);
     }
     
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        
-        setActivityInitialTouchMode(false);
-        
-        activity = getActivity();
-    }
-    
-    /**
-     * Helper function for clicking a button.
-     * 
-     * @param button
-     */
-    private void clickButton(final Button button) {
-        activity.runOnUiThread(new Runnable() {
-            public void run() {
-                button.requestFocus();
-            }
-        });
-        getInstrumentation().waitForIdleSync();
-        sendKeys(KeyEvent.KEYCODE_DPAD_CENTER);
-    }
-    
     /**
      * Helper function for adding a menu item through the appropriate dialog
      * 
@@ -94,31 +70,27 @@ public class STabTest extends ActivityInstrumentationTestCase2<STab> {
     }
     
     /**
-     * Ensure that adding people correctly adds to the data controller.
+     * Helper function for clicking a button.
+     * 
+     * @param button
      */
-    public void testAddPerson() {
-        addPerson("test");
-        
-        assertEquals(activity.getDataController().getPersonName(1), "test");
-        assertEquals(activity.getDataController().getPersonPhoto(1), null);
+    private void clickButton(final Button button) {
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                button.requestFocus();
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+        sendKeys(KeyEvent.KEYCODE_DPAD_CENTER);
     }
     
-    /**
-     * Ensure that adding a person with an empty name does not add to the data controller.
-     */
-    public void testAddNamelessPerson() {
-        addPerson("");        
-        assertEquals(1, activity.getDataController().getPersonCount());
-    }    
-    
-    /**
-     * Ensure adding a menu item adds to the data controller.
-     */
-    public void testAddMenuItem() {
-        addMenuItem("test", "1.99");
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
         
-        assertEquals(activity.getDataController().getMenuItemName(0), "test");
-        assertEquals(activity.getDataController().getMenuItemPrice(0), Double.valueOf(1.99));
+        setActivityInitialTouchMode(false);
+        
+        activity = getActivity();
     }
     
     /**
@@ -133,6 +105,54 @@ public class STabTest extends ActivityInstrumentationTestCase2<STab> {
         
         addMenuItem("", "");
         assertEquals(0, activity.getDataController().getMenuItemCount());
+    }
+    
+    /**
+     * Ensure adding a menu item adds to the data controller.
+     */
+    public void testAddMenuItem() {
+        addMenuItem("test", "1.99");
+        
+        assertEquals(activity.getDataController().getMenuItemName(0), "test");
+        assertEquals(activity.getDataController().getMenuItemPrice(0), Double.valueOf(1.99));
     }    
+    
+    /**
+     * Ensure that adding a person with an empty name does not add to the data controller.
+     */
+    public void testAddNamelessPerson() {
+        addPerson("");        
+        assertEquals(1, activity.getDataController().getPersonCount());
+    }
+    
+    /**
+     * Ensure that adding people correctly adds to the data controller.
+     */
+    public void testAddPerson() {
+        addPerson("test");
+        
+        assertEquals(activity.getDataController().getPersonName(1), "test");
+        assertEquals(activity.getDataController().getPersonPhoto(1), null);
+    }
+    
+    public void testClearMenuItems() {
+        // TODO: implement
+    }
+    
+    public void testClearPeople() {
+        // TODO: implement
+    }
+    
+    public void testEditTax() {
+        // TODO: implement
+    }
+    
+    public void testEditTip() {
+        // TODO: implement
+    }
+    
+    public void testSaveAndRestoreState() {
+        // TODO: implement
+    }
     
 }
