@@ -31,7 +31,7 @@ public class STDataController implements OnClickListener {
      * @param value
      * @return Percentage-formatted String of value.
      */
-    private static String getFormattedPercentage(double value) {
+    public static String getFormattedPercentage(double value) {
         return NumberFormat.getPercentInstance().format(value);
     }
     
@@ -40,7 +40,7 @@ public class STDataController implements OnClickListener {
      * @param price
      * @return Currency-formatted String of price.
      */
-    private static String getFormattedPrice(Double price) {
+    public static String getFormattedPrice(Double price) {
         return NumberFormat.getCurrencyInstance().format(price.doubleValue());
     }
     
@@ -65,7 +65,7 @@ public class STDataController implements OnClickListener {
     private String autoCompletedContactId;
     
     /**
-     * Initializes all of the peope/menu item parallel arrays.
+     * Initializes all of the people/menu item parallel arrays.
      */
     public STDataController() {
         personNames = new ArrayList<String>();

@@ -1,7 +1,5 @@
 package com.scarredions.stab;
 
-import java.text.NumberFormat;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,16 +18,7 @@ import android.widget.TextView;
  *
  */
 public class STMenuListAdapter extends BaseAdapter implements DialogInterface.OnClickListener {
-    
-    /**
-     * Static method for formatting prices.
-     * @param price
-     * @return Currency-formatted String of price.
-     */
-    public static String getFormattedPrice(Double price) {
-        return NumberFormat.getCurrencyInstance().format(price.doubleValue());
-    }
-    
+        
     private Context context;    
     private STDataController dataController;    
     private AlertDialog addMenuItemDialog;
@@ -109,7 +98,7 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
         menuItemName.setText(dataController.getMenuItemName(position));
         
         menuItemPrice = (CheckedTextView) menuItemView.findViewById(R.id.list_item_price);
-        menuItemPrice.setText(getFormattedPrice(dataController.getMenuItemPrice(position)));
+        menuItemPrice.setText(STDataController.getFormattedPrice(dataController.getMenuItemPrice(position)));
         menuItemPrice.setChecked(dataController.currentPersonHasSelected(position));
         
         return menuItemView;
