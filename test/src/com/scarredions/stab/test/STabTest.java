@@ -137,6 +137,14 @@ public class STabTest extends ActivityInstrumentationTestCase2<STab> {
     }
     
     /**
+     * Ensure adding a menu item with negative price gets ignored
+     */
+    public void testAddNegativeMenuItem() {
+        addMenuItem("test", "-1.99");
+        assertEquals(0, activity.getDataController().getMenuItemCount());
+    }
+    
+    /**
      * Ensure adding a menu item adds to the data controller.
      */
     public void testAddMenuItem() {
