@@ -8,7 +8,11 @@ import android.content.DialogInterface;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.KeyEvent;
 import android.widget.Button;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
+import android.widget.Gallery;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 
 public class STabTest extends ActivityInstrumentationTestCase2<STab> {
 
@@ -84,6 +88,31 @@ public class STabTest extends ActivityInstrumentationTestCase2<STab> {
         sendKeys(KeyEvent.KEYCODE_DPAD_CENTER);
     }
     
+    /**
+     * 
+     * @param position
+     * @return true if the menu item at position is selected, false otherwise
+     */
+    public boolean isMenuItemSelected(int position) {
+        ListView menuItemList = (ListView) activity.findViewById(R.id.menu_list_view);
+        LinearLayout menuItem = (LinearLayout) menuItemList.getChildAt(position);
+        return ((CheckedTextView) menuItem.findViewById(R.id.list_item_price)).isChecked();
+    }
+    
+    /**
+     * Selects the person at position in the person list gallery
+     * @param position
+     */
+    public void selectPerson(final int position) {
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                Gallery personList = (Gallery) activity.findViewById(R.id.person_list_view);
+                personList.setSelection(position);                
+            }
+        });
+        getInstrumentation().waitForIdleSync();
+    }
+    
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -91,7 +120,7 @@ public class STabTest extends ActivityInstrumentationTestCase2<STab> {
         setActivityInitialTouchMode(false);
         
         activity = getActivity();
-    }
+    }    
     
     /**
      * Ensure adding a menu item with elements missing does not add to the data controller.
@@ -115,7 +144,7 @@ public class STabTest extends ActivityInstrumentationTestCase2<STab> {
         
         assertEquals(activity.getDataController().getMenuItemName(0), "test");
         assertEquals(activity.getDataController().getMenuItemPrice(0), Double.valueOf(1.99));
-    }    
+    }
     
     /**
      * Ensure that adding a person with an empty name does not add to the data controller.
@@ -135,24 +164,58 @@ public class STabTest extends ActivityInstrumentationTestCase2<STab> {
         assertEquals(activity.getDataController().getPersonPhoto(1), null);
     }
     
-    public void testClearMenuItems() {
-        // TODO: implement
+    /**
+     * Ensure that switching between people preserves selection state.
+     */
+    public void testSwitchSelections() {
+        addPerson("test");
+        addMenuItem("test1", "1.00");
+        
+        selectPerson(1);
+        toggleMenuItemSelected(0);        
+        assertEquals(true, isMenuItemSelected(0));
+        
+        selectPerson(0);
+        assertEquals(false, isMenuItemSelected(0));
     }
     
-    public void testClearPeople() {
-        // TODO: implement
+    /**
+     * Toggles the checked state of the menu item at position
+     * @param position
+     */
+    public void toggleMenuItemSelected(final int position) {
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                ListView menuItemList = (ListView) activity.findViewById(R.id.menu_list_view);
+                LinearLayout menuItem = (LinearLayout) menuItemList.getChildAt(position);
+                ((CheckedTextView) menuItem.findViewById(R.id.list_item_price)).toggle();                
+            }
+        });
+        getInstrumentation().waitForIdleSync();
     }
     
-    public void testEditTax() {
-        // TODO: implement
-    }
-    
-    public void testEditTip() {
-        // TODO: implement
-    }
-    
-    public void testSaveAndRestoreState() {
-        // TODO: implement
-    }
+//    public void testSaveAndRestoreState() {
+//
+//    }
+//    
+//    public void testClearMenuItems() {
+//        // TODO: implement
+//    }
+//    
+//    public void testClearPeople() {
+//        // TODO: implement
+//    }
+//    
+//    public void testEditTax() {
+//        // TODO: implement
+//    }
+//    
+//    public void testEditTip() {
+//        // TODO: implement
+//    }
+//    
+//    public void testSaveAndRestoreState() {
+//        // TODO: implement
+//    }
     
 }

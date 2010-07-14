@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
     <Button
@@ -18,7 +19,8 @@
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@id/add_person_button"
         android:gravity="center"
-        android:spacing="10dip" />
+        android:spacing="10dip"
+        android:unselectedAlpha="0.6" />
     <View
         android:id="@+id/divider"
         android:background="@drawable/gradient"
