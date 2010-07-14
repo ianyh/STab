@@ -129,6 +129,9 @@ public class STDataController {
      * @param id _ID from Contacts if exists.
      */
     public void addPerson(String name, String id) {
+        if (personIds.contains(id)) {
+            return;
+        }
         personNames.add(name);
         personIds.add(id);
         personPhotos.add(getBitmapFromId(context, id));
