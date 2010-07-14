@@ -410,6 +410,12 @@ public class STDataController implements OnClickListener {
             if (value.equals("")) {
                 return;
             }
+            
+            double doubleValue = Double.valueOf(value);
+            if (doubleValue < 0 || doubleValue > 1.0) {
+                return;
+            }
+            
             if (type.equals("Tax")) {
                 setTaxPercentage(Double.valueOf(value));
             } else if (type.equals("Tip")) {

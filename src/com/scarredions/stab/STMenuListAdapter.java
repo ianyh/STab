@@ -128,7 +128,8 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
             
             entry = (EditText) d.findViewById(R.id.item_price_edit);
             String itemPrice = entry.getText().toString();
-            if (itemName.equals("") || itemPrice.equals("")) {
+            if (itemName.equals("") || itemPrice.equals("") || 
+                    Double.valueOf(itemPrice) < 0) {
                 addMenuItemDialog = null;
                 return;
             }
