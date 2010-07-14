@@ -64,10 +64,12 @@ public class STDataController implements OnClickListener {
     
     private String autoCompletedContactId;
     
+    private Context context;
+    
     /**
      * Initializes all of the people/menu item parallel arrays.
      */
-    public STDataController() {
+    public STDataController(Context context) {
         personNames = new ArrayList<String>();
         personIds = new ArrayList<String>();
         personPhotos = new ArrayList<Bitmap>();
@@ -75,6 +77,8 @@ public class STDataController implements OnClickListener {
         
         menuItemNames = new ArrayList<String>();
         menuItemPrices = new ArrayList<Double>();
+        
+        this.context = context;
     }
     
     /**
@@ -85,7 +89,7 @@ public class STDataController implements OnClickListener {
      * @param savedInstanceState
      */
     public STDataController(Context context, Bundle savedInstanceState) {
-        this();
+        this(context);
         if (savedInstanceState != null) {
             personNames = savedInstanceState.getStringArrayList("personNames");
             personIds = savedInstanceState.getStringArrayList("personIds");
@@ -146,7 +150,7 @@ public class STDataController implements OnClickListener {
     public void addPerson(String name, String id) {
         personNames.add(name);
         personIds.add(id);
-        personPhotos.add(getBitmapFromId(menuListFooter.getContext(), id));
+        personPhotos.add(getBitmapFromId(context, id));
         personSelections.add(new HashSet<Integer>());
         updateMenuListFooter();
     }
@@ -187,12 +191,12 @@ public class STDataController implements OnClickListener {
      * @param value The current value of the type.
      */
     private void editByDialog(String type, Double value) {
-        LayoutInflater factory = LayoutInflater.from(menuListFooter.getContext());
+        LayoutInflater factory = LayoutInflater.from(context);
         LinearLayout dialogLayout = (LinearLayout) factory.inflate(R.layout.dialog_tax_or_tip_entry, null);
         ((TextView) dialogLayout.findViewById(R.id.value_view)).setText(type);
         ((EditText) dialogLayout.findViewById(R.id.value_edit)).setText(value.toString());
         
-        new AlertDialog.Builder(menuListFooter.getContext())
+        new AlertDialog.Builder(context)
             .setView(dialogLayout)
             .setPositiveButton("OK", this)
             .setNegativeButton("Cancel", this)
@@ -417,7 +421,7 @@ public class STDataController implements OnClickListener {
             }
             
             if (type.equals("Tax")) {
-                setTaxPercentage(Double.valueOf(value));
+                setTaxPercentage(Double.valueOf(value));                
             } else if (type.equals("Tip")) {
                 setTipPercentage(Double.valueOf(value));
             }
