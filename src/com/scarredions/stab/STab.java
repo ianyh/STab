@@ -3,6 +3,7 @@ package com.scarredions.stab;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -109,7 +110,10 @@ public class STab extends Activity implements OnClickListener
      */
     public View inflateMenuListTotalView() {
         LayoutInflater factory = LayoutInflater.from(this);
-        return factory.inflate(R.layout.list_total, null);
+        LinearLayout totalView = (LinearLayout) factory.inflate(R.layout.list_total, null);
+        ((TextView) totalView.getChildAt(0)).setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+        ((TextView) totalView.getChildAt(1)).setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+        return totalView;
     }
     
     /**
