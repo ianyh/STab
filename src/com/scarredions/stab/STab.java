@@ -1,6 +1,8 @@
 package com.scarredions.stab;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -12,6 +14,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckedTextView;
+import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.HeaderViewListAdapter;
 import android.widget.LinearLayout;
@@ -28,7 +31,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
  * @author ianyh
  *
  */
-public class STab extends Activity implements OnClickListener
+public class STab extends Activity implements OnClickListener, DialogInterface.OnClickListener
 {
     private final STContactAccessor contactsAccessor = STContactAccessor.getInstance();
     
@@ -37,6 +40,8 @@ public class STab extends Activity implements OnClickListener
     private STDataController dataController;
     private Button addPersonButton;
     private Button addMenuItemButton;
+    
+    private AlertDialog editTaxOrTipDialog;
     
     /**
      * Does some specific processing to make the button layout correctly
@@ -152,10 +157,10 @@ public class STab extends Activity implements OnClickListener
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
         case STConstants.MENU_EDIT_TAX:
-            dataController.editTaxByDialog();
+            this.editTaxByDialog();
             return true;
         case STConstants.MENU_EDIT_TIP:
-            dataController.editTipByDialog();
+            this.editTipByDialog();
             return true;
         case STConstants.MENU_CLEAR_MENU:
             dataController.clearMenuItems();
@@ -246,5 +251,70 @@ public class STab extends Activity implements OnClickListener
                 dataController);
         personListAdapter.setContactsAutoCompleteAdapter(contactsAdapter);
     }
+
+    /**
+     * Click handler for tax/tip edit dialog.
+     * 
+     * Fails silently if the value entered is empty or invalid.
+     */
+    public void onClick(DialogInterface dialog, int whichButton) {
+        if (whichButton == DialogInterface.BUTTON_POSITIVE) {
+            AlertDialog d = (AlertDialog) dialog;
+            String type = ((TextView) d.findViewById(R.id.value_view)).getText().toString();
+            String value = ((EditText) d.findViewById(R.id.value_edit)).getText().toString();
+            if (value.equals("")) {
+                return;
+            }
+            
+            double doubleValue = Double.valueOf(value);
+            if (doubleValue < 0 || doubleValue > 1.0) {
+                return;
+            }
+            
+            if (type.equals("Tax")) {
+                dataController.setTaxPercentage(Double.valueOf(value));
+            } else if (type.equals("Tip")) {
+                dataController.setTipPercentage(Double.valueOf(value));
+            }            
+        }
+        
+        editTaxOrTipDialog = null;
+        
+    }
+    
+    /**
+     * Launches a dialog for editing either tax or tip.
+     * @param type Type of dialog to launch (tax or tip)
+     * @param value The current value of the type.
+     */
+    private void editByDialog(String type, Double value) {
+        LayoutInflater factory = LayoutInflater.from(this);
+        LinearLayout dialogLayout = (LinearLayout) factory.inflate(R.layout.dialog_tax_or_tip_entry, null);
+        ((TextView) dialogLayout.findViewById(R.id.value_view)).setText(type);
+        ((EditText) dialogLayout.findViewById(R.id.value_edit)).setText(value.toString());
+        
+        editTaxOrTipDialog = new AlertDialog.Builder(this)
+            .setView(dialogLayout)
+            .setPositiveButton("OK", this)
+            .setNegativeButton("Cancel", this)
+            .create();
+        
+        editTaxOrTipDialog.show();
+    }
+    
+    /**
+     * Launches a dialog for editing tax.
+     */
+    public void editTaxByDialog() {
+        editByDialog(STConstants.TAX, Double.valueOf(dataController.getTaxPercentage()));
+    }
+    
+    /**
+     * Launches a dialog for editing tip.
+     */
+    public void editTipByDialog() {
+        editByDialog(STConstants.TIP, Double.valueOf(dataController.getTipPercentage()));
+    }
+    
     
 }

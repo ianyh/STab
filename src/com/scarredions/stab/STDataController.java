@@ -5,15 +5,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -24,7 +19,7 @@ import android.widget.TextView;
  * @author ianyh
  *
  */
-public class STDataController implements OnClickListener {
+public class STDataController {
     
     /**
      * Static method for formatting a percentage as a String.
@@ -184,39 +179,7 @@ public class STDataController implements OnClickListener {
         Set<Integer> selections = getCurrentPersonsSelections();
         return selections.contains(Integer.valueOf(menuListPosition));
     }
-    
-    /**
-     * Launches a dialog for editing either tax or tip.
-     * @param type Type of dialog to launch (tax or tip)
-     * @param value The current value of the type.
-     */
-    private void editByDialog(String type, Double value) {
-        LayoutInflater factory = LayoutInflater.from(context);
-        LinearLayout dialogLayout = (LinearLayout) factory.inflate(R.layout.dialog_tax_or_tip_entry, null);
-        ((TextView) dialogLayout.findViewById(R.id.value_view)).setText(type);
-        ((EditText) dialogLayout.findViewById(R.id.value_edit)).setText(value.toString());
         
-        new AlertDialog.Builder(context)
-            .setView(dialogLayout)
-            .setPositiveButton("OK", this)
-            .setNegativeButton("Cancel", this)
-            .create().show();
-    }
-    
-    /**
-     * Launches a dialog for editing tax.
-     */
-    public void editTaxByDialog() {
-        editByDialog(STConstants.TAX, Double.valueOf(tax));
-    }
-    
-    /**
-     * Launches a dialog for editing tip.
-     */
-    public void editTipByDialog() {
-        editByDialog(STConstants.TIP, Double.valueOf(tip));
-    }
-    
     /**
      * As a side effect, nulls out the autoCompletedContactId to prevent accidental
      * repeated contact IDs. 
@@ -356,6 +319,14 @@ public class STDataController implements OnClickListener {
 
     /**
      * 
+     * @return the percentage of tax
+     */
+    public double getTaxPercentage() {
+        return tax;
+    }
+    
+    /**
+     * 
      * @return View within the menu list footer that displays tax 
      */
     public View getTaxView() {
@@ -368,6 +339,14 @@ public class STDataController implements OnClickListener {
      */
     public Double getTip() {
         return (getTotal() + getTax()) * tip;
+    }
+    
+    /**
+     * 
+     * @return the percentage of tip
+     */
+    public double getTipPercentage() {
+        return tip;
     }
     
     /**
@@ -400,34 +379,7 @@ public class STDataController implements OnClickListener {
     public View getTotalView() {
         return menuListFooter.getChildAt(STConstants.MENU_LIST_FOOTER_TOTAL_POSITION);
     }
-    
-    /**
-     * Click handler for tax/tip edit dialog.
-     * 
-     * Fails silently if the value entered is empty.
-     */
-    public void onClick(DialogInterface dialog, int whichButton) {
-        if (whichButton == DialogInterface.BUTTON_POSITIVE) {
-            AlertDialog d = (AlertDialog) dialog;
-            String type = ((TextView) d.findViewById(R.id.value_view)).getText().toString();
-            String value = ((EditText) d.findViewById(R.id.value_edit)).getText().toString();
-            if (value.equals("")) {
-                return;
-            }
-            
-            double doubleValue = Double.valueOf(value);
-            if (doubleValue < 0 || doubleValue > 1.0) {
-                return;
-            }
-            
-            if (type.equals("Tax")) {
-                setTaxPercentage(Double.valueOf(value));                
-            } else if (type.equals("Tip")) {
-                setTipPercentage(Double.valueOf(value));
-            }
-        }
-    }
-    
+        
     /**
      * Serializes all necessary state into the given Bundle.
      * Does not serialize contact photos. Those are reloaded from IDs on restore.
