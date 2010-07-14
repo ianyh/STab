@@ -49,6 +49,7 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
      */
     public void add(String name, String id) {
         dataController.addPerson(name, id);
+        menuListAdapter.updateMenuListFooter();
     }
     
     /**

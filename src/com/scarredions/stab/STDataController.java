@@ -8,14 +8,11 @@ import java.util.Set;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 /**
  * Data controller for the whole application. 
  * Keeps people, menu items, tax percentage, and tip percentage.
- * Responsible for keeping the menu list footer updated.
+ * 
  * @author ianyh
  *
  */
@@ -28,15 +25,6 @@ public class STDataController {
      */
     public static String getFormattedPercentage(double value) {
         return NumberFormat.getPercentInstance().format(value);
-    }
-    
-    /**
-     * Static method for formatting a price as a String.
-     * @param price
-     * @return Currency-formatted String of price.
-     */
-    public static String getFormattedPrice(Double price) {
-        return NumberFormat.getCurrencyInstance().format(price.doubleValue());
     }
     
     private final STContactAccessor contactsAccessor = STContactAccessor.getInstance();
@@ -54,8 +42,6 @@ public class STDataController {
     private ArrayList<String> menuItemNames;
     
     private ArrayList<Double> menuItemPrices;
-    
-    private LinearLayout menuListFooter;
     
     private String autoCompletedContactId;
     
@@ -147,7 +133,6 @@ public class STDataController {
         personIds.add(id);
         personPhotos.add(getBitmapFromId(context, id));
         personSelections.add(new HashSet<Integer>());
-        updateMenuListFooter();
     }
     
     /**
@@ -247,10 +232,6 @@ public class STDataController {
         return prices;
     }
     
-    public View getMenuListFooter() {
-        return menuListFooter;
-    }
-    
     /**
      * 
      * @param menuListPosition
@@ -324,15 +305,7 @@ public class STDataController {
     public double getTaxPercentage() {
         return tax;
     }
-    
-    /**
-     * 
-     * @return View within the menu list footer that displays tax 
-     */
-    public View getTaxView() {
-        return menuListFooter.getChildAt(STConstants.MENU_LIST_FOOTER_TAX_POSITION);
-    }
-     
+         
     /**
      * 
      * @return tip owed on the entire bill
@@ -351,14 +324,6 @@ public class STDataController {
     
     /**
      * 
-     * @return View within the menu list footer that displays tip
-     */
-    public View getTipView() {
-        return menuListFooter.getChildAt(STConstants.MENU_LIST_FOOTER_TIP_POSITION);
-    }
-    
-    /**
-     * 
      * @return total owed on the bill before tax and tip
      */
     public Double getTotal() {
@@ -372,14 +337,6 @@ public class STDataController {
         return Double.valueOf(total);
     }
     
-    /**
-     * 
-     * @return View within the menu list footer that displays total
-     */
-    public View getTotalView() {
-        return menuListFooter.getChildAt(STConstants.MENU_LIST_FOOTER_TOTAL_POSITION);
-    }
-        
     /**
      * Serializes all necessary state into the given Bundle.
      * Does not serialize contact photos. Those are reloaded from IDs on restore.
@@ -433,15 +390,7 @@ public class STDataController {
     public void setCurrentPersonId(int personId) {
         currentPersonId = personId;
     }
-    
-    /**
-     * Keep menu list footer in state for updating.
-     * @param footerView
-     */
-    public void setMenuListFooter(LinearLayout footerView) {
-        menuListFooter = footerView;
-    }
-    
+        
     /**
      * Toggles the selection of the menu item identified by menuListPosition for
      * the currently selected person.
@@ -458,61 +407,19 @@ public class STDataController {
     }
     
     /**
-     * Sets a new tax percentage and updates the appropriate view to reflect change.
+     * Sets a new tax percentage.
      * @param newTax
      */
     public void setTaxPercentage(double newTax) {
         tax = newTax;
-        TextView taxView = (TextView) ((LinearLayout) getTaxView()).findViewById(R.id.list_footer_text);
-        taxView.setText(STConstants.TAX + " (" + getFormattedTaxPercentage() + ")");
-        updateTax();
     }
     
     /**
-     * Sets a new tip percentage and updates the appropriate view to reflect change.
+     * Sets a new tip percentage.
      * @param newTip
      */
     public void setTipPercentage(double newTip) {
         tip = newTip;
-        TextView tipView = (TextView) ((LinearLayout) getTipView()).findViewById(R.id.list_footer_text);
-        tipView.setText(STConstants.TIP + " (" + getFormattedTipPercentage() + ")");
-        updateTip();
     }
 
-    /**
-     * Begins chain of menu list footer updates at the bottom.
-     * updateMenuListFooter() -> updateTax() -> updateTip() -> updateTotal()
-     */
-    public void updateMenuListFooter() {
-        updateTax();
-    }
-    
-    /**
-     * Updates the tax owed, and then forces an update of tip, which depends on tax.
-     * updateTax() -> updateTip() -> updateTotal()
-     */
-    public void updateTax() {
-        TextView tax = (TextView) ((LinearLayout) getTaxView()).findViewById(R.id.list_footer_value);
-        tax.setText(getFormattedPrice(getPersonTax()));
-        updateTip();
-    }
-
-    /**
-     * Updates the tip owed, and then forces an update of total, which depends on tip.
-     * updateTip() -> updateTotal()
-     */
-    public void updateTip() {
-        TextView tip = (TextView) ((LinearLayout) getTipView()).findViewById(R.id.list_footer_value);
-        tip.setText(getFormattedPrice(getPersonTip()));
-        updateTotal();
-    }
-
-    /**
-     * Updates the total owed.
-     * updateTotal()
-     */
-    public void updateTotal() {
-        TextView total = (TextView) ((LinearLayout) getTotalView()).findViewById(R.id.list_footer_value);
-        total.setText(getFormattedPrice(getPersonTotal() + getPersonTax() + getPersonTip()));
-    }
 }

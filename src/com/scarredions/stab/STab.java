@@ -175,9 +175,9 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
             }
             
             if (type.equals("Tax")) {
-                dataController.setTaxPercentage(Double.valueOf(value));
+                menuListAdapter.setTaxPercentage(Double.valueOf(value));
             } else if (type.equals("Tip")) {
-                dataController.setTipPercentage(Double.valueOf(value));
+                menuListAdapter.setTipPercentage(Double.valueOf(value));
             }            
         }
         
@@ -275,7 +275,7 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
         menuListView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 STMenuListAdapter mla = (STMenuListAdapter) ((HeaderViewListAdapter) parent.getAdapter()).getWrappedAdapter();
-                if (mla.getDataController().getMenuListFooter() == v) {
+                if (mla.getMenuListFooter() == v) {
                     return;
                 }
                 
@@ -284,11 +284,11 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
                 menuItemPrice.toggle();
                 
                 mla.getDataController().setSelection(position, menuItemPrice.isChecked());
-                mla.getDataController().updateMenuListFooter();
+                mla.updateMenuListFooter();
             }
         });
         
-        dataController.setMenuListFooter(footerLayout);
+        menuListAdapter.setMenuListFooter(footerLayout);
         
         // set up the person gallery
         Gallery personListView = (Gallery) findViewById(R.id.person_list_view);
