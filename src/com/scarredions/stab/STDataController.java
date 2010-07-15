@@ -129,7 +129,7 @@ public class STDataController {
      * @param id _ID from Contacts if exists.
      */
     public void addPerson(String name, String id) {
-        if (personIds.contains(id)) {
+        if (!id.equals(STConstants.PERSON_NULL_ID) && personIds.contains(id)) {
             return;
         }
         personNames.add(name);
