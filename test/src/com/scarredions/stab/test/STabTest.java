@@ -202,9 +202,6 @@ public class STabTest extends ActivityInstrumentationTestCase2<STab> {
         getInstrumentation().waitForIdleSync();
     }
     
-//    public void testSaveAndRestoreState() {
-//
-//    }
 //    
 //    public void testClearMenuItems() {
 //        // TODO: implement
@@ -214,13 +211,121 @@ public class STabTest extends ActivityInstrumentationTestCase2<STab> {
 //        // TODO: implement
 //    }
 //    
-//    public void testEditTax() {
-//        // TODO: implement
-//    }
-//    
-//    public void testEditTip() {
-//        // TODO: implement
-//    }
+    public void testEditTax() {
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                activity.editTaxByDialog();
+                AlertDialog dialog = activity.getEditTaxOrTipDialog();
+                EditText valueEdit = (EditText) dialog.findViewById(R.id.value_edit);
+                valueEdit.setText("0.18");
+                Button okay = (Button) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                okay.requestFocus();
+            }
+        });
+        
+        getInstrumentation().waitForIdleSync();
+        sendKeys(KeyEvent.KEYCODE_DPAD_CENTER);
+
+        getInstrumentation().waitForIdleSync();
+        
+        assertEquals(0.18, activity.getDataController().getTaxPercentage());
+    }
+    
+    public void testEditTaxInvalid() {
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                activity.editTaxByDialog();
+                AlertDialog dialog = activity.getEditTaxOrTipDialog();
+                EditText valueEdit = (EditText) dialog.findViewById(R.id.value_edit);
+                valueEdit.setText("-0.18");
+                Button okay = (Button) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                okay.requestFocus();
+            }
+        });
+        
+        getInstrumentation().waitForIdleSync();
+        sendKeys(KeyEvent.KEYCODE_DPAD_CENTER);
+
+        getInstrumentation().waitForIdleSync();
+        
+        assertEquals(0.08, activity.getDataController().getTaxPercentage());
+        
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                activity.editTaxByDialog();
+                AlertDialog dialog = activity.getEditTaxOrTipDialog();
+                EditText valueEdit = (EditText) dialog.findViewById(R.id.value_edit);
+                valueEdit.setText("1.18");
+                Button okay = (Button) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                okay.requestFocus();
+            }
+        });
+        
+        getInstrumentation().waitForIdleSync();
+        sendKeys(KeyEvent.KEYCODE_DPAD_CENTER);
+
+        getInstrumentation().waitForIdleSync();
+        
+        assertEquals(0.08, activity.getDataController().getTaxPercentage());        
+    }
+    
+    public void testEditTip() {
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                activity.editTipByDialog();
+                AlertDialog dialog = activity.getEditTaxOrTipDialog();
+                EditText valueEdit = (EditText) dialog.findViewById(R.id.value_edit);
+                valueEdit.setText("0.18");
+                Button okay = (Button) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                okay.requestFocus();
+            }
+        });
+        
+        getInstrumentation().waitForIdleSync();
+        sendKeys(KeyEvent.KEYCODE_DPAD_CENTER);
+
+        getInstrumentation().waitForIdleSync();
+        
+        assertEquals(0.18, activity.getDataController().getTipPercentage());
+    }
+    
+    public void testEditTipInvalid() {
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                activity.editTipByDialog();
+                AlertDialog dialog = activity.getEditTaxOrTipDialog();
+                EditText valueEdit = (EditText) dialog.findViewById(R.id.value_edit);
+                valueEdit.setText("-0.18");
+                Button okay = (Button) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                okay.requestFocus();
+            }
+        });
+        
+        getInstrumentation().waitForIdleSync();
+        sendKeys(KeyEvent.KEYCODE_DPAD_CENTER);
+
+        getInstrumentation().waitForIdleSync();
+        
+        assertEquals(0.2, activity.getDataController().getTipPercentage());
+        
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                activity.editTipByDialog();
+                AlertDialog dialog = activity.getEditTaxOrTipDialog();
+                EditText valueEdit = (EditText) dialog.findViewById(R.id.value_edit);
+                valueEdit.setText("1.18");
+                Button okay = (Button) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                okay.requestFocus();
+            }
+        });
+        
+        getInstrumentation().waitForIdleSync();
+        sendKeys(KeyEvent.KEYCODE_DPAD_CENTER);
+
+        getInstrumentation().waitForIdleSync();
+        
+        assertEquals(0.2, activity.getDataController().getTipPercentage());        
+    }    
 //    
 //    public void testSaveAndRestoreState() {
 //        // TODO: implement

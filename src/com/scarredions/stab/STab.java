@@ -103,6 +103,14 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
     
     /**
      * 
+     * @return the AlertDialog for tax/tip editing, or null if there is no dialog open
+     */
+    public AlertDialog getEditTaxOrTipDialog() {
+        return editTaxOrTipDialog;
+    }
+    
+    /**
+     * 
      * @return The activity's menu item list's adapter
      */
     public STMenuListAdapter getMenuListAdapter() {
