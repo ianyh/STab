@@ -136,6 +136,9 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
                 return;
             }
             String contactId = dataController.getAndClearAutoCompletedContactId();
+            if (contactId == null) {
+                contactId = STConstants.PERSON_NULL_ID;
+            }
             add(name, contactId);
             this.notifyDataSetChanged();
         }
