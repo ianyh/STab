@@ -1,7 +1,6 @@
 package com.scarredions.stab;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
@@ -21,16 +20,15 @@ import android.widget.TextView;
  */
 public class STPersonListAdapter extends BaseAdapter implements DialogInterface.OnClickListener {
 
-    private Context context;
-    private STMenuListAdapter menuListAdapter;
+    private STab activity;
     
     private STDataController dataController;
     private SimpleCursorAdapter contactsAutoCompleteAdapter;
     
     private AlertDialog addPersonDialog;
     
-    public STPersonListAdapter(Context context, STDataController dataController) {
-        this.context = context;
+    public STPersonListAdapter(STab activity, STDataController dataController) {
+        this.activity = activity;
         this.dataController = dataController;
     }
     
@@ -49,7 +47,7 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
      */
     public void add(String name, String id) {
         dataController.addPerson(name, id);
-        menuListAdapter.updateMenuListFooter();
+        activity.notifyDataSetChanged();
     }
     
     /**
@@ -58,12 +56,12 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
      * The dialog itself is saved in internal state for testing purposes.
      */
     public void addPersonByDialog() {
-        LayoutInflater factory = LayoutInflater.from(context);
+        LayoutInflater factory = LayoutInflater.from(activity);
         LinearLayout dialogLayout = (LinearLayout) factory.inflate(R.layout.dialog_person_entry, null);
         AutoCompleteTextView textEntryView = (AutoCompleteTextView) dialogLayout.findViewById(R.id.name_edit);
         textEntryView.setAdapter(contactsAutoCompleteAdapter);
         
-        addPersonDialog = new AlertDialog.Builder(context)
+        addPersonDialog = new AlertDialog.Builder(activity)
             .setView(dialogLayout)
             .setPositiveButton("OK", this)
             .setNegativeButton("Cancel", this)
@@ -95,17 +93,13 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
     public long getItemId(int position) {
         return position;
     }
-        
-    public STMenuListAdapter getMenuListAdapter() {
-        return menuListAdapter;
-    }
     
     /**
      * Inflates from contact.xml
      */
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            LayoutInflater factory = LayoutInflater.from(context);
+            LayoutInflater factory = LayoutInflater.from(activity);
             LinearLayout layout = (LinearLayout) factory.inflate(R.layout.contact, null);
             ImageView contactPhotoView = (ImageView) layout.findViewById(R.id.contact_image);
             TextView contactNameView = (TextView) layout.findViewById(R.id.contact_name);
@@ -148,10 +142,6 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
     
     public void setContactsAutoCompleteAdapter(SimpleCursorAdapter adapter) {
         contactsAutoCompleteAdapter = adapter;
-    }
-        
-    public void setMenuListAdapter(STMenuListAdapter mla) {
-        this.menuListAdapter = mla;
     }
     
 }

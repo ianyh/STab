@@ -163,6 +163,11 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
         return totalView;
     }
     
+    public void notifyDataSetChanged() {
+        menuListAdapter.notifyDataSetChanged();
+        personListAdapter.notifyDataSetChanged();
+    }
+    
     /**
      * Click handler for tax/tip edit dialog.
      * 
@@ -265,7 +270,6 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
         // create adapters
         menuListAdapter = new STMenuListAdapter(this, dataController);
         personListAdapter = new STPersonListAdapter(this, dataController);
-        personListAdapter.setMenuListAdapter(menuListAdapter);
 
         View menuListTotal = inflateMenuListTotalView();
         View menuListTax = inflateMenuListTaxView();
@@ -298,6 +302,8 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
         
         menuListAdapter.setMenuListFooter(footerLayout);
         
+        final STab activity = this;
+        
         // set up the person gallery
         Gallery personListView = (Gallery) findViewById(R.id.person_list_view);
         personListView.setAdapter(personListAdapter);
@@ -305,13 +311,12 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
             public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
                 STPersonListAdapter adapter = (STPersonListAdapter) parent.getAdapter();
                 adapter.getDataController().setCurrentPersonId(position);
-                adapter.getMenuListAdapter().notifyDataSetChanged();
+                activity.notifyDataSetChanged();
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
-                STPersonListAdapter adapter = (STPersonListAdapter) parent.getAdapter();
                 parent.setSelection(0);
-                adapter.getMenuListAdapter().notifyDataSetChanged();
+                activity.notifyDataSetChanged();
             }
         });
         
