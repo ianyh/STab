@@ -21,4 +21,16 @@
         android:singleLine="true"
         android:ellipsize="marquee"
         android:textColor="#fff" />
+    <TextView
+        android:id="@+id/contact_total"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:maxWidth="64dip"
+        android:paddingRight="2dip"
+        android:paddingLeft="2dip"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:textColor="#fff" />
 </LinearLayout>

@@ -191,7 +191,9 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
                 menuListAdapter.setTaxPercentage(Double.valueOf(value));
             } else if (type.equals("Tip")) {
                 menuListAdapter.setTipPercentage(Double.valueOf(value));
-            }            
+            }
+            
+            notifyDataSetChanged();            
         }
         
         editTaxOrTipDialog = null;
@@ -280,6 +282,8 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
         footerLayout.addView(menuListTip);
         footerLayout.addView(menuListTotal);
         
+        final STab activity = this;
+        
         // set up the menu list view
         ListView menuListView = (ListView) findViewById(R.id.menu_list_view);
         menuListView.addFooterView(footerLayout);
@@ -297,12 +301,12 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
                 
                 mla.getDataController().setSelection(position, menuItemPrice.isChecked());
                 mla.updateMenuListFooter();
+                
+                activity.notifyDataSetChanged();
             }
         });
         
-        menuListAdapter.setMenuListFooter(footerLayout);
-        
-        final STab activity = this;
+        menuListAdapter.setMenuListFooter(footerLayout);        
         
         // set up the person gallery
         Gallery personListView = (Gallery) findViewById(R.id.person_list_view);

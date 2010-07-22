@@ -215,7 +215,7 @@ public class STDataController {
     }
     
     public String getCurrentPersonTotal() {
-        return getFormattedPrice(getPersonTotal(currentPersonId));
+        return getPersonTotal(currentPersonId);
     }
     
     public String getFormattedTaxPercentage() {
@@ -300,13 +300,13 @@ public class STDataController {
      * 
      * @return total amount of owed by currently selected person
      */
-    private Double getPersonTotal(int personPosition) {
+    public String getPersonTotal(int personPosition) {
         double total = 0;
         for (Integer selection : personSelections.get(personPosition)) {
             total += menuItemPrices.get(selection.intValue()).doubleValue() /
                 getNumberOfPeopleWithSelection(selection.intValue());
         }
-        return total + getPersonTax(personPosition) + getPersonTip(personPosition);
+        return getFormattedPrice(total + getPersonTax(personPosition) + getPersonTip(personPosition));
     }
     
     /**

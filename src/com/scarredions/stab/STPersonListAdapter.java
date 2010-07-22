@@ -98,9 +98,10 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
      * Inflates from contact.xml
      */
     public View getView(int position, View convertView, ViewGroup parent) {
+        LinearLayout layout;
         if (convertView == null) {
             LayoutInflater factory = LayoutInflater.from(activity);
-            LinearLayout layout = (LinearLayout) factory.inflate(R.layout.contact, null);
+            layout = (LinearLayout) factory.inflate(R.layout.contact, null);
             ImageView contactPhotoView = (ImageView) layout.findViewById(R.id.contact_image);
             TextView contactNameView = (TextView) layout.findViewById(R.id.contact_name);
             
@@ -109,10 +110,14 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
                 contactPhotoView.setImageBitmap(contactPhoto);
             }
             contactNameView.setText(dataController.getPersonName(position));
-            return layout;
         } else {
-            return convertView;
+            layout = (LinearLayout) convertView;
         }
+        
+        TextView contactTotal = (TextView) layout.findViewById(R.id.contact_total);
+        contactTotal.setText(dataController.getPersonTotal(position));
+        
+        return layout;
     }
     
     /**
@@ -134,7 +139,7 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
                 contactId = STConstants.PERSON_NULL_ID;
             }
             add(name, contactId);
-            this.notifyDataSetChanged();
+            activity.notifyDataSetChanged();
         }
         
         addPersonDialog = null;

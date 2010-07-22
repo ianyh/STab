@@ -46,7 +46,7 @@ public class STabTest extends ActivityInstrumentationTestCase2<STab> {
         });
         
         getInstrumentation().waitForIdleSync();
-        this.sendKeys(KeyEvent.KEYCODE_DPAD_CENTER);        
+        this.sendKeys(KeyEvent.KEYCODE_DPAD_CENTER);
     }
     
     /**

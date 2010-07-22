@@ -3,7 +3,6 @@ package com.scarredions.stab;
 import java.text.NumberFormat;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,14 +28,14 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
     public static String getFormattedPrice(Double price) {
         return NumberFormat.getCurrencyInstance().format(price.doubleValue());
     }    
-    private Context context;    
+    private STab activity;    
     private STDataController dataController;
     private AlertDialog addMenuItemDialog;
 
     private LinearLayout menuListFooter;
     
-    public STMenuListAdapter(Context context, STDataController dataController) {
-        this.context = context;
+    public STMenuListAdapter(STab activity, STDataController dataController) {
+        this.activity = activity;
         this.dataController = dataController;
     }
     
@@ -55,10 +54,10 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
      * AlertDialog is saved in state for testing purposes.
      */
     public void addMenuItemByDialog() {
-        LayoutInflater factory = LayoutInflater.from(context);
+        LayoutInflater factory = LayoutInflater.from(activity);
         final View textEntryView = factory.inflate(R.layout.dialog_menu_item_entry, null);
         
-        addMenuItemDialog = new AlertDialog.Builder(context)
+        addMenuItemDialog = new AlertDialog.Builder(activity)
             .setView(textEntryView)
             .setPositiveButton("OK", this)
             .setNegativeButton("Cancel", this)
@@ -128,7 +127,7 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
         CheckedTextView menuItemPrice;
         
         if (convertView == null) {
-            LayoutInflater factory = LayoutInflater.from(context);
+            LayoutInflater factory = LayoutInflater.from(activity);
             menuItemView = (LinearLayout) factory.inflate(R.layout.list_item, null);
         } else {
             menuItemView = (LinearLayout) convertView;
@@ -175,8 +174,7 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
             }
             
             add(itemName, Double.valueOf(itemPrice));
-            
-            this.notifyDataSetChanged();
+            activity.notifyDataSetChanged();
         }
         
         addMenuItemDialog = null;
