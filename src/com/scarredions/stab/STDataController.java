@@ -27,6 +27,10 @@ public class STDataController {
         return NumberFormat.getPercentInstance().format(value);
     }
     
+    public static String getFormattedPrice(Double price) {
+        return NumberFormat.getCurrencyInstance().format(price.doubleValue());
+    }    
+    
     private final STContactAccessor contactsAccessor = STContactAccessor.getInstance();
     
     // TODO: get this from location?
@@ -186,7 +190,7 @@ public class STDataController {
      * @param contactId
      * @return Contact photo Bitmap if exists.
      */
-    public Bitmap getBitmapFromId(Context context, String contactId) {
+    private Bitmap getBitmapFromId(Context context, String contactId) {
         if (contactId == null || contactId.equals(STConstants.PERSON_NULL_ID)) {
             return null;
         }
@@ -200,6 +204,18 @@ public class STDataController {
      */
     public HashSet<Integer> getCurrentPersonsSelections() {
         return personSelections.get(currentPersonId);
+    }
+    
+    public String getCurrentPersonTax() {
+        return getFormattedPrice(getPersonTax(currentPersonId));
+    }
+    
+    public String getCurrentPersonTip() {
+        return getFormattedPrice(getPersonTip(currentPersonId));
+    }
+    
+    public String getCurrentPersonTotal() {
+        return getFormattedPrice(getPersonTotal(currentPersonId));
     }
     
     public String getFormattedTaxPercentage() {
@@ -218,8 +234,8 @@ public class STDataController {
         return menuItemNames.get(position);
     }
     
-    public Double getMenuItemPrice(int position) {
-        return menuItemPrices.get(position);
+    public String getMenuItemPrice(int position) {
+        return getFormattedPrice(menuItemPrices.get(position));
     }
     
     /**
@@ -268,7 +284,7 @@ public class STDataController {
      * 
      * @return per person share of tax
      */
-    public Double getPersonTax() {
+    private Double getPersonTax(int personPosition) {
         return getTax() / personSelections.size();
     }
     
@@ -276,7 +292,7 @@ public class STDataController {
      * 
      * @return per person share of tip
      */
-    public Double getPersonTip() {
+    private Double getPersonTip(int personPosition) {
         return getTip() / personSelections.size();
     }
     
@@ -284,20 +300,20 @@ public class STDataController {
      * 
      * @return total amount of owed by currently selected person
      */
-    public Double getPersonTotal() {
+    private Double getPersonTotal(int personPosition) {
         double total = 0;
-        for (Integer selection : getCurrentPersonsSelections()) {
-            total += getMenuItemPrice(selection.intValue()).doubleValue() /
+        for (Integer selection : personSelections.get(personPosition)) {
+            total += menuItemPrices.get(selection.intValue()).doubleValue() /
                 getNumberOfPeopleWithSelection(selection.intValue());
         }
-        return total;
+        return total + getPersonTax(personPosition) + getPersonTip(personPosition);
     }
     
     /**
      * 
      * @return tax owed on the entire bill
      */
-    public Double getTax() {
+    private Double getTax() {
         return getTotal() * tax;
     }
 
@@ -313,7 +329,7 @@ public class STDataController {
      * 
      * @return tip owed on the entire bill
      */
-    public Double getTip() {
+    private Double getTip() {
         return (getTotal() + getTax()) * tip;
     }
     
@@ -329,7 +345,7 @@ public class STDataController {
      * 
      * @return total owed on the bill before tax and tip
      */
-    public Double getTotal() {
+    private Double getTotal() {
         double total = 0;
         int menuItemPricesLen = menuItemPrices.size();
 

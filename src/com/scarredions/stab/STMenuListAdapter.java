@@ -138,7 +138,7 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
         menuItemName.setText(dataController.getMenuItemName(position));
         
         menuItemPrice = (CheckedTextView) menuItemView.findViewById(R.id.list_item_price);
-        menuItemPrice.setText(STMenuListAdapter.getFormattedPrice(dataController.getMenuItemPrice(position)));
+        menuItemPrice.setText(dataController.getMenuItemPrice(position));
         menuItemPrice.setChecked(dataController.currentPersonHasSelected(position));
         
         return menuItemView;
@@ -226,7 +226,7 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
      */
     public void updateTax() {
         TextView tax = (TextView) ((LinearLayout) getTaxView()).findViewById(R.id.list_footer_value);
-        tax.setText(STMenuListAdapter.getFormattedPrice(dataController.getPersonTax()));
+        tax.setText(dataController.getCurrentPersonTax());
         updateTip();
     }
 
@@ -236,7 +236,7 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
      */
     public void updateTip() {
         TextView tip = (TextView) ((LinearLayout) getTipView()).findViewById(R.id.list_footer_value);
-        tip.setText(STMenuListAdapter.getFormattedPrice(dataController.getPersonTip()));
+        tip.setText(dataController.getCurrentPersonTip());
         updateTotal();
     }
 
@@ -246,7 +246,7 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
      */
     public void updateTotal() {
         TextView total = (TextView) ((LinearLayout) getTotalView()).findViewById(R.id.list_footer_value);
-        total.setText(STMenuListAdapter.getFormattedPrice(dataController.getPersonTotal() + dataController.getPersonTax() + dataController.getPersonTip()));
+        total.setText(dataController.getCurrentPersonTotal());
     }
     
 }

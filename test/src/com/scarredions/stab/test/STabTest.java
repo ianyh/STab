@@ -150,8 +150,8 @@ public class STabTest extends ActivityInstrumentationTestCase2<STab> {
     public void testAddMenuItem() {
         addMenuItem("test", "1.99");
         
-        assertEquals(activity.getDataController().getMenuItemName(0), "test");
-        assertEquals(activity.getDataController().getMenuItemPrice(0), Double.valueOf(1.99));
+        assertEquals("test", activity.getDataController().getMenuItemName(0));
+        assertEquals("$1.99", activity.getDataController().getMenuItemPrice(0));
     }
     
     /**
@@ -168,8 +168,8 @@ public class STabTest extends ActivityInstrumentationTestCase2<STab> {
     public void testAddPerson() {
         addPerson("test");
         
-        assertEquals(activity.getDataController().getPersonName(1), "test");
-        assertEquals(activity.getDataController().getPersonPhoto(1), null);
+        assertEquals("test", activity.getDataController().getPersonName(1));
+        assertEquals(null, activity.getDataController().getPersonPhoto(1));
     }
     
     /**
