@@ -170,6 +170,13 @@ public class STabTest extends ActivityInstrumentationTestCase2<STab> {
         
         assertEquals("test", activity.getDataController().getPersonName(1));
         assertEquals(null, activity.getDataController().getPersonPhoto(1));
+        
+        addPerson("foo");
+        addPerson("bar");
+        addPerson("baz");
+        addPerson("qux");
+        
+        assertEquals(6, activity.getDataController().getPersonCount());
     }
     
     /**

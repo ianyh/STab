@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -18,7 +19,7 @@ import android.widget.TextView;
  * @author ianyh
  *
  */
-public class STPersonListAdapter extends BaseAdapter implements DialogInterface.OnClickListener {
+public class STPersonListAdapter extends BaseAdapter implements DialogInterface.OnClickListener, AdapterView.OnItemClickListener {
 
     private STab activity;
     
@@ -60,6 +61,7 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
         LinearLayout dialogLayout = (LinearLayout) factory.inflate(R.layout.dialog_person_entry, null);
         AutoCompleteTextView textEntryView = (AutoCompleteTextView) dialogLayout.findViewById(R.id.name_edit);
         textEntryView.setAdapter(contactsAutoCompleteAdapter);
+        textEntryView.setOnItemClickListener(this);
         
         addPersonDialog = new AlertDialog.Builder(activity)
             .setView(dialogLayout)
@@ -134,7 +136,7 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
                 addPersonDialog = null;
                 return;
             }
-            String contactId = dataController.getAndClearAutoCompletedContactId();
+            String contactId = dataController.getAndClearAutoCompletedContactId(name);
             if (contactId == null) {
                 contactId = STConstants.PERSON_NULL_ID;
             }
@@ -147,6 +149,11 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
     
     public void setContactsAutoCompleteAdapter(SimpleCursorAdapter adapter) {
         contactsAutoCompleteAdapter = adapter;
+    }
+
+    public void onItemClick(AdapterView<?> autoCompleteList, View autoCompleteItem, int listPosition, long contactId) {
+        String contactName = ((TextView) autoCompleteItem).getText().toString();
+        dataController.setAutoCompletedContact(contactName, String.valueOf(contactId));
     }
     
 }

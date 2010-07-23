@@ -362,8 +362,7 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
         STContactListAdapter contactsAdapter = new STContactListAdapter(this,
                 R.layout.autocomplete_list_item, cursor,
                 new String[] { contactsAccessor.getDisplayNameColumnName() },
-                new int[] { R.id.autocomplete_text },
-                dataController);
+                new int[] { R.id.autocomplete_text });
         personListAdapter.setContactsAutoCompleteAdapter(contactsAdapter);
     }
     

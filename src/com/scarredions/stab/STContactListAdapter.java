@@ -15,12 +15,10 @@ public class STContactListAdapter extends SimpleCursorAdapter implements Filtera
 
     private final STContactAccessor contactAccessor = STContactAccessor.getInstance();
     private ContentResolver mContent;
-    private STDataController dataController;
         
-    public STContactListAdapter(Context context, int layout, Cursor c, String[] from, int[] to, STDataController dataController) {
+    public STContactListAdapter(Context context, int layout, Cursor c, String[] from, int[] to) {
         super(context, layout, c, from, to);
         mContent = context.getContentResolver();
-        this.dataController = dataController;
     }
     
     /**
@@ -28,10 +26,8 @@ public class STContactListAdapter extends SimpleCursorAdapter implements Filtera
      */
     @Override
     public String convertToString(Cursor cursor) {
-        int idIndex = contactAccessor.getIdColumnIndex(cursor);
         int nameIndex = contactAccessor.getNameColumnIndex(cursor);
         
-        dataController.setAutoCompletedContactId(cursor.getString(idIndex));
         return cursor.getString(nameIndex);
     }
     

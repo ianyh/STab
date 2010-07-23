@@ -47,6 +47,7 @@ public class STDataController {
     private ArrayList<Double> menuItemPrices;
     
     private String autoCompletedContactId;
+    private String autoCompletedContactName;
     
     private Context context;
     
@@ -173,12 +174,19 @@ public class STDataController {
         
     /**
      * As a side effect, nulls out the autoCompletedContactId to prevent accidental
-     * repeated contact IDs. 
-     * @return most recent ID selected through auto complete in the add person dialog.
+     * repeated contact IDs.
+     * @param contactName
+     * @return most recent ID selected through auto complete in the add person dialog 
+     * or the null id if the name has changed since then
      */
-    public String getAndClearAutoCompletedContactId() {
+    public String getAndClearAutoCompletedContactId(String contactName) {
+        if (autoCompletedContactName == null || !contactName.equals(autoCompletedContactName)) {
+            return STConstants.PERSON_NULL_ID;
+        }
+        
         String id = autoCompletedContactId;
-        autoCompletedContactId = null;
+        autoCompletedContactName = null;
+        autoCompletedContactId = null;        
         return id;
     }
     
@@ -407,13 +415,14 @@ public class STDataController {
     }
 
     /**
-     * Used to hold the contact id of a selection from the auto complete
-     * in the add person dialog.
+     * Sets the auto completed contact information for retrieval later
+     * @param contactName
      * @param contactId
      */
-    public void setAutoCompletedContactId(String contactId) {
-        this.autoCompletedContactId = contactId;
-    }
+    public void setAutoCompletedContact(String contactName, String contactId) {
+        autoCompletedContactName = contactName;
+        autoCompletedContactId = contactId;
+    }    
     
     /**
      * Sets currently selected id so we can keep track of who is selected.
