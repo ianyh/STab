@@ -6,10 +6,12 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -21,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 
@@ -35,6 +38,8 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
 {
     private final STContactAccessor contactsAccessor = STContactAccessor.getInstance();
     
+    private ListView menuListView;
+    private Gallery personListView;
     private STMenuListAdapter menuListAdapter;
     private STPersonListAdapter personListAdapter;
     private STDataController dataController;
@@ -212,6 +217,23 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
         }
     }
 
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case 0:
+                dataController.removeMenuItem((int) info.id);
+                notifyDataSetChanged();
+                return true;
+            case 1:
+                dataController.removePerson((int) info.id);
+                notifyDataSetChanged();
+                return true;
+        }
+
+        return false;
+    }
+    
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -223,6 +245,15 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
         updateLayout();
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        if (v == menuListView) {
+            menu.add(0, 0, 0, "Delete");
+        } else if (v == personListView) {
+            menu.add(0, 1, 0, "Delete");
+        }
+    }
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, STConstants.MENU_EDIT_TAX, 0, "Edit " + STConstants.TAX);
@@ -285,7 +316,7 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
         final STab activity = this;
         
         // set up the menu list view
-        ListView menuListView = (ListView) findViewById(R.id.menu_list_view);
+        menuListView = (ListView) findViewById(R.id.menu_list_view);
         menuListView.addFooterView(footerLayout);
         menuListView.setAdapter(menuListAdapter);
         menuListView.setOnItemClickListener(new OnItemClickListener() {
@@ -306,10 +337,11 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
             }
         });
         
+        registerForContextMenu(menuListView);
         menuListAdapter.setMenuListFooter(footerLayout);        
         
         // set up the person gallery
-        Gallery personListView = (Gallery) findViewById(R.id.person_list_view);
+        personListView = (Gallery) findViewById(R.id.person_list_view);
         personListView.setAdapter(personListAdapter);
         personListView.setOnItemSelectedListener(new OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
@@ -323,6 +355,8 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
                 activity.notifyDataSetChanged();
             }
         });
+        
+        registerForContextMenu(personListView);
         
         Cursor cursor = contactsAccessor.managedQuery(this);
         STContactListAdapter contactsAdapter = new STContactListAdapter(this,

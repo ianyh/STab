@@ -44,7 +44,6 @@ public class STDataController {
     private int currentPersonId;
     
     private ArrayList<String> menuItemNames;
-    
     private ArrayList<Double> menuItemPrices;
     
     private String autoCompletedContactId;
@@ -354,6 +353,20 @@ public class STDataController {
         }
         
         return Double.valueOf(total);
+    }
+    
+    public void removeMenuItem(int menuItemId) {
+        
+    }
+    
+    public void removePerson(int personId) {
+        if (currentPersonId == personId && currentPersonId == personNames.size() - 1) {
+            currentPersonId--;
+        }
+        personNames.remove(personId);
+        personIds.remove(personId);
+        personPhotos.remove(personId);
+        personSelections.remove(personId);
     }
     
     /**
