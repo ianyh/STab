@@ -364,8 +364,18 @@ public class STDataController {
     }
     
     public void removeMenuItem(int menuItemId) {
+        for (HashSet<Integer> selections : personSelections) {
+            selections.remove(Integer.valueOf(menuItemId));
+            for (int i = menuItemId + 1; i < menuItemNames.size(); i++) {
+                if (selections.remove(Integer.valueOf(i))) {
+                    selections.add(Integer.valueOf(i-1));
+                }
+            }
+        }
         
-    }
+        menuItemNames.remove(menuItemId);
+        menuItemPrices.remove(menuItemId);
+    }        
     
     public void removePerson(int personId) {
         if (currentPersonId == personId && currentPersonId == personNames.size() - 1) {
