@@ -50,5 +50,12 @@
         android:gravity="fill_horizontal"
         android:inputType="numberDecimal"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+        
+    <TextView
+        android:id="@+id/item_id_hidden"
+        android:layout_height="0px"
+        android:layout_width="0px"
+        android:visibility="invisible"
+        android:text="-1" />  
 
 </LinearLayout>

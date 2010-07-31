@@ -48,6 +48,14 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
         dataController.addMenuItem(itemName, itemPrice);
     }
     
+    public void add(String itemName, Double itemPrice, int itemId) {
+        if (itemId < 0) {
+            add(itemName, itemPrice);
+        } else {
+            dataController.updateMenuItem(itemId, itemName, itemPrice);
+        }
+    }
+    
     /**
      * Opens an AlertDialog for entering a new menu item.
      * 
@@ -64,6 +72,25 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
             .create();
         
         addMenuItemDialog.show();
+    }
+
+    public void editMenuItemByDialog(int menuItemId) {
+        LayoutInflater factory = LayoutInflater.from(activity);
+        LinearLayout textEntryView = (LinearLayout) factory.inflate(R.layout.dialog_menu_item_entry, null);
+        EditText entry = (EditText) textEntryView.findViewById(R.id.item_name_edit);
+        entry.setText(dataController.getMenuItemName(menuItemId));
+        entry = (EditText) textEntryView.findViewById(R.id.item_price_edit);
+        entry.setText(dataController.getMenuItemPrice(menuItemId).substring(1));
+        
+        TextView itemId = (TextView) textEntryView.findViewById(R.id.item_id_hidden);
+        itemId.setText(Integer.valueOf(menuItemId).toString());
+        
+        new AlertDialog.Builder(activity)
+            .setView(textEntryView)
+            .setPositiveButton("OK", this)
+            .setNegativeButton("Cancel", this)
+            .create()
+            .show();
     }
 
     /**
@@ -173,7 +200,9 @@ public class STMenuListAdapter extends BaseAdapter implements DialogInterface.On
                 return;
             }
             
-            add(itemName, Double.valueOf(itemPrice));
+            String itemId = ((TextView) d.findViewById(R.id.item_id_hidden)).getText().toString();
+            
+            add(itemName, Double.valueOf(itemPrice), Integer.valueOf(itemId));
             activity.notifyDataSetChanged();
         }
         

@@ -472,5 +472,10 @@ public class STDataController {
     public void setTipPercentage(double newTip) {
         tip = newTip;
     }
+    
+    public void updateMenuItem(int menuItemId, String menuItemName, Double menuItemPrice) {
+        menuItemNames.set(menuItemId, menuItemName);
+        menuItemPrices.set(menuItemId, menuItemPrice);
+    }
 
 }

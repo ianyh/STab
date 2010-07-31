@@ -229,6 +229,10 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
                 dataController.removePerson((int) info.id);
                 notifyDataSetChanged();
                 return true;
+            case 2:
+                menuListAdapter.editMenuItemByDialog((int) info.id);
+                notifyDataSetChanged();
+                return true;
         }
 
         return false;
@@ -248,6 +252,7 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         if (v == menuListView) {
+            menu.add(0, 2, 0, "Edit");
             menu.add(0, 0, 0, "Delete");
         } else if (v == personListView) {
             menu.add(0, 1, 0, "Delete");
