@@ -51,6 +51,15 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
         activity.notifyDataSetChanged();
     }
     
+    public void add(String name, String id, int personId)
+    {
+        if (personId < 0) {
+            add(name, id);
+        } else {
+            dataController.updatePerson(personId, name, id);
+        }
+    }
+    
     /**
      * Opens an AlertDialog for adding a person to the list.
      * 
@@ -76,10 +85,14 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
     {
         LayoutInflater factory = LayoutInflater.from(activity);
         LinearLayout dialogLayout = (LinearLayout) factory.inflate(R.layout.dialog_person_entry, null);
-        AutoCompleteTextView textEntryView = (AutoCompleteTextView) dialogLayout.findViewById(R.id.person_id_hidden);
+        AutoCompleteTextView textEntryView = (AutoCompleteTextView) dialogLayout.findViewById(R.id.name_edit);
         textEntryView.setAdapter(contactsAutoCompleteAdapter);
         textEntryView.setOnItemClickListener(this);
         dataController.setAutoCompletedContact(dataController.getPersonName(personId), dataController.getPersonContactId(personId));
+        textEntryView.setText(dataController.getPersonName(personId));
+        
+        TextView personIdTextView = (TextView) dialogLayout.findViewById(R.id.person_id_hidden);
+        personIdTextView.setText(String.valueOf(personId));
         
         new AlertDialog.Builder(activity)
             .setView(dialogLayout)
@@ -157,7 +170,10 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
             if (contactId == null) {
                 contactId = STConstants.PERSON_NULL_ID;
             }
-            add(name, contactId);
+            
+            String personId = ((TextView) d.findViewById(R.id.person_id_hidden)).getText().toString();
+            
+            add(name, contactId, Integer.valueOf(personId).intValue());
             activity.notifyDataSetChanged();
         }
         

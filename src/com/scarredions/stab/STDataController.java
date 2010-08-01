@@ -481,5 +481,15 @@ public class STDataController {
         menuItemNames.set(menuItemId, menuItemName);
         menuItemPrices.set(menuItemId, menuItemPrice);
     }
+    
+    public void updatePerson(int personId, String name, String id) {
+        if (!id.equals(STConstants.PERSON_NULL_ID) && personIds.contains(id)) {
+            return;
+        }
+        personNames.set(personId, name);
+        personIds.set(personId, id);
+        personPhotos.set(personId, getBitmapFromId(context, id));
+        personSelections.set(personId, new HashSet<Integer>());
+    }
 
 }
