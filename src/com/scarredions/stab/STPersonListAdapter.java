@@ -72,6 +72,23 @@ public class STPersonListAdapter extends BaseAdapter implements DialogInterface.
         addPersonDialog.show();
     }
     
+    public void editPersonByDialog(int personId)
+    {
+        LayoutInflater factory = LayoutInflater.from(activity);
+        LinearLayout dialogLayout = (LinearLayout) factory.inflate(R.layout.dialog_person_entry, null);
+        AutoCompleteTextView textEntryView = (AutoCompleteTextView) dialogLayout.findViewById(R.id.person_id_hidden);
+        textEntryView.setAdapter(contactsAutoCompleteAdapter);
+        textEntryView.setOnItemClickListener(this);
+        dataController.setAutoCompletedContact(dataController.getPersonName(personId), dataController.getPersonContactId(personId));
+        
+        new AlertDialog.Builder(activity)
+            .setView(dialogLayout)
+            .setPositiveButton("OK", this)
+            .setNegativeButton("Cancel", this)
+            .create()
+            .show();
+    }
+
     /**
      * 
      * @return null if there is no open dialog, otherwise returns the dialog

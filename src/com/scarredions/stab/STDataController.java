@@ -275,6 +275,10 @@ public class STDataController {
         return counter;
     }
     
+    public String getPersonContactId(int position) {
+        return personIds.get(position);
+    }
+    
     public int getPersonCount() {
         return personNames.size();
     }

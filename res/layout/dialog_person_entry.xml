@@ -23,5 +23,10 @@
         android:singleLine="true"
         android:completionThreshold="1"
         android:textColor="#000"
-        android:textAppearance="?android:attr/textAppearanceMedium" />        
+        android:textAppearance="?android:attr/textAppearanceMedium" />  
+    <TextView
+        android:id="@+id/person_id_hidden"
+        android:layout_height="0px"
+        android:layout_width="0px"
+        android:text="-1" />
 </LinearLayout>

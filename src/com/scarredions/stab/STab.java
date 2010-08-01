@@ -233,6 +233,10 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
                 menuListAdapter.editMenuItemByDialog((int) info.id);
                 notifyDataSetChanged();
                 return true;
+            case 3:
+                personListAdapter.editPersonByDialog((int) info.id);
+                notifyDataSetChanged();
+                return true;
         }
 
         return false;
@@ -256,6 +260,7 @@ public class STab extends Activity implements OnClickListener, DialogInterface.O
             menu.add(0, 0, 0, "Delete");
         } else if (v == personListView) {
             menu.add(0, 1, 0, "Delete");
+            menu.add(0, 3, 0, "Edit");
         }
     }
     
